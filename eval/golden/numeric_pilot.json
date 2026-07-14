@@ -1,0 +1,1348 @@
+{
+  "queries": [
+    {
+      "id": "aapl_revenue_2025",
+      "query": "What was Apple's total revenue in fiscal year 2025?",
+      "ticker": "AAPL",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 416161000000.0
+    },
+    {
+      "id": "aapl_rd_2025",
+      "query": "How much did Apple spend on research and development in fiscal year 2025?",
+      "ticker": "AAPL",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 34550000000.0
+    },
+    {
+      "id": "aapl_net_income_2025",
+      "query": "What was Apple's net income in fiscal year 2025?",
+      "ticker": "AAPL",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 112010000000.0
+    },
+    {
+      "id": "aapl_gross_profit_2025",
+      "query": "What was Apple's gross profit in fiscal year 2025?",
+      "ticker": "AAPL",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 195201000000.0
+    },
+    {
+      "id": "aapl_operating_income_2025",
+      "query": "What was Apple's operating income in fiscal year 2025?",
+      "ticker": "AAPL",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 133050000000.0
+    },
+    {
+      "id": "aapl_diluted_eps_2025",
+      "query": "What was Apple's diluted earnings per share in fiscal year 2025?",
+      "ticker": "AAPL",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 7.46
+    },
+    {
+      "id": "aapl_revenue_2024",
+      "query": "What was Apple's total revenue in fiscal year 2024?",
+      "ticker": "AAPL",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 391035000000.0
+    },
+    {
+      "id": "aapl_rd_2024",
+      "query": "How much did Apple spend on research and development in fiscal year 2024?",
+      "ticker": "AAPL",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 31370000000.0
+    },
+    {
+      "id": "aapl_net_income_2024",
+      "query": "What was Apple's net income in fiscal year 2024?",
+      "ticker": "AAPL",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 93736000000.0
+    },
+    {
+      "id": "aapl_gross_profit_2024",
+      "query": "What was Apple's gross profit in fiscal year 2024?",
+      "ticker": "AAPL",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 180683000000.0
+    },
+    {
+      "id": "aapl_operating_income_2024",
+      "query": "What was Apple's operating income in fiscal year 2024?",
+      "ticker": "AAPL",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 123216000000.0
+    },
+    {
+      "id": "aapl_diluted_eps_2024",
+      "query": "What was Apple's diluted earnings per share in fiscal year 2024?",
+      "ticker": "AAPL",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 6.08
+    },
+    {
+      "id": "aapl_revenue_2023",
+      "query": "What was Apple's total revenue in fiscal year 2023?",
+      "ticker": "AAPL",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 383285000000.0
+    },
+    {
+      "id": "aapl_rd_2023",
+      "query": "How much did Apple spend on research and development in fiscal year 2023?",
+      "ticker": "AAPL",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 29915000000.0
+    },
+    {
+      "id": "aapl_net_income_2023",
+      "query": "What was Apple's net income in fiscal year 2023?",
+      "ticker": "AAPL",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 96995000000.0
+    },
+    {
+      "id": "aapl_gross_profit_2023",
+      "query": "What was Apple's gross profit in fiscal year 2023?",
+      "ticker": "AAPL",
+      "period_fy": 2023,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 169148000000.0
+    },
+    {
+      "id": "aapl_operating_income_2023",
+      "query": "What was Apple's operating income in fiscal year 2023?",
+      "ticker": "AAPL",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 114301000000.0
+    },
+    {
+      "id": "aapl_diluted_eps_2023",
+      "query": "What was Apple's diluted earnings per share in fiscal year 2023?",
+      "ticker": "AAPL",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 6.13
+    },
+    {
+      "id": "msft_revenue_2025",
+      "query": "What was Microsoft's total revenue in fiscal year 2025?",
+      "ticker": "MSFT",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 281724000000.0
+    },
+    {
+      "id": "msft_rd_2025",
+      "query": "How much did Microsoft spend on research and development in fiscal year 2025?",
+      "ticker": "MSFT",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 32488000000.0
+    },
+    {
+      "id": "msft_net_income_2025",
+      "query": "What was Microsoft's net income in fiscal year 2025?",
+      "ticker": "MSFT",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 101832000000.0
+    },
+    {
+      "id": "msft_gross_profit_2025",
+      "query": "What was Microsoft's gross profit in fiscal year 2025?",
+      "ticker": "MSFT",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 193893000000.0
+    },
+    {
+      "id": "msft_operating_income_2025",
+      "query": "What was Microsoft's operating income in fiscal year 2025?",
+      "ticker": "MSFT",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 128528000000.0
+    },
+    {
+      "id": "msft_diluted_eps_2025",
+      "query": "What was Microsoft's diluted earnings per share in fiscal year 2025?",
+      "ticker": "MSFT",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 13.64
+    },
+    {
+      "id": "msft_revenue_2024",
+      "query": "What was Microsoft's total revenue in fiscal year 2024?",
+      "ticker": "MSFT",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 245122000000.0
+    },
+    {
+      "id": "msft_rd_2024",
+      "query": "How much did Microsoft spend on research and development in fiscal year 2024?",
+      "ticker": "MSFT",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 29510000000.0
+    },
+    {
+      "id": "msft_net_income_2024",
+      "query": "What was Microsoft's net income in fiscal year 2024?",
+      "ticker": "MSFT",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 88136000000.0
+    },
+    {
+      "id": "msft_gross_profit_2024",
+      "query": "What was Microsoft's gross profit in fiscal year 2024?",
+      "ticker": "MSFT",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 171008000000.0
+    },
+    {
+      "id": "msft_operating_income_2024",
+      "query": "What was Microsoft's operating income in fiscal year 2024?",
+      "ticker": "MSFT",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 109433000000.0
+    },
+    {
+      "id": "msft_diluted_eps_2024",
+      "query": "What was Microsoft's diluted earnings per share in fiscal year 2024?",
+      "ticker": "MSFT",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 11.8
+    },
+    {
+      "id": "msft_revenue_2023",
+      "query": "What was Microsoft's total revenue in fiscal year 2023?",
+      "ticker": "MSFT",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 211915000000.0
+    },
+    {
+      "id": "msft_rd_2023",
+      "query": "How much did Microsoft spend on research and development in fiscal year 2023?",
+      "ticker": "MSFT",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 27195000000.0
+    },
+    {
+      "id": "msft_net_income_2023",
+      "query": "What was Microsoft's net income in fiscal year 2023?",
+      "ticker": "MSFT",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 72361000000.0
+    },
+    {
+      "id": "msft_gross_profit_2023",
+      "query": "What was Microsoft's gross profit in fiscal year 2023?",
+      "ticker": "MSFT",
+      "period_fy": 2023,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 146052000000.0
+    },
+    {
+      "id": "msft_operating_income_2023",
+      "query": "What was Microsoft's operating income in fiscal year 2023?",
+      "ticker": "MSFT",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 88523000000.0
+    },
+    {
+      "id": "msft_diluted_eps_2023",
+      "query": "What was Microsoft's diluted earnings per share in fiscal year 2023?",
+      "ticker": "MSFT",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 9.68
+    },
+    {
+      "id": "googl_revenue_2025",
+      "query": "What was Google's total revenue in fiscal year 2025?",
+      "ticker": "GOOGL",
+      "period_fy": 2025,
+      "concept": "us-gaap_Revenues",
+      "expected_value": 402836000000.0
+    },
+    {
+      "id": "googl_rd_2025",
+      "query": "How much did Google spend on research and development in fiscal year 2025?",
+      "ticker": "GOOGL",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 61087000000.0
+    },
+    {
+      "id": "googl_net_income_2025",
+      "query": "What was Google's net income in fiscal year 2025?",
+      "ticker": "GOOGL",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 132170000000.0
+    },
+    {
+      "id": "googl_operating_income_2025",
+      "query": "What was Google's operating income in fiscal year 2025?",
+      "ticker": "GOOGL",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 129039000000.0
+    },
+    {
+      "id": "googl_diluted_eps_2025",
+      "query": "What was Google's diluted earnings per share in fiscal year 2025?",
+      "ticker": "GOOGL",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 10.81
+    },
+    {
+      "id": "googl_revenue_2024",
+      "query": "What was Google's total revenue in fiscal year 2024?",
+      "ticker": "GOOGL",
+      "period_fy": 2024,
+      "concept": "us-gaap_Revenues",
+      "expected_value": 350018000000.0
+    },
+    {
+      "id": "googl_rd_2024",
+      "query": "How much did Google spend on research and development in fiscal year 2024?",
+      "ticker": "GOOGL",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 49326000000.0
+    },
+    {
+      "id": "googl_net_income_2024",
+      "query": "What was Google's net income in fiscal year 2024?",
+      "ticker": "GOOGL",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 100118000000.0
+    },
+    {
+      "id": "googl_operating_income_2024",
+      "query": "What was Google's operating income in fiscal year 2024?",
+      "ticker": "GOOGL",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 112390000000.0
+    },
+    {
+      "id": "googl_diluted_eps_2024",
+      "query": "What was Google's diluted earnings per share in fiscal year 2024?",
+      "ticker": "GOOGL",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 8.04
+    },
+    {
+      "id": "googl_revenue_2023",
+      "query": "What was Google's total revenue in fiscal year 2023?",
+      "ticker": "GOOGL",
+      "period_fy": 2023,
+      "concept": "us-gaap_Revenues",
+      "expected_value": 307394000000.0
+    },
+    {
+      "id": "googl_rd_2023",
+      "query": "How much did Google spend on research and development in fiscal year 2023?",
+      "ticker": "GOOGL",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 45427000000.0
+    },
+    {
+      "id": "googl_net_income_2023",
+      "query": "What was Google's net income in fiscal year 2023?",
+      "ticker": "GOOGL",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 73795000000.0
+    },
+    {
+      "id": "googl_operating_income_2023",
+      "query": "What was Google's operating income in fiscal year 2023?",
+      "ticker": "GOOGL",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 84293000000.0
+    },
+    {
+      "id": "googl_diluted_eps_2023",
+      "query": "What was Google's diluted earnings per share in fiscal year 2023?",
+      "ticker": "GOOGL",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 5.8
+    },
+    {
+      "id": "meta_revenue_2025",
+      "query": "What was Meta's total revenue in fiscal year 2025?",
+      "ticker": "META",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 200966000000.0
+    },
+    {
+      "id": "meta_rd_2025",
+      "query": "How much did Meta spend on research and development in fiscal year 2025?",
+      "ticker": "META",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 57372000000.0
+    },
+    {
+      "id": "meta_net_income_2025",
+      "query": "What was Meta's net income in fiscal year 2025?",
+      "ticker": "META",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 60458000000.0
+    },
+    {
+      "id": "meta_operating_income_2025",
+      "query": "What was Meta's operating income in fiscal year 2025?",
+      "ticker": "META",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 83276000000.0
+    },
+    {
+      "id": "meta_diluted_eps_2025",
+      "query": "What was Meta's diluted earnings per share in fiscal year 2025?",
+      "ticker": "META",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 23.49
+    },
+    {
+      "id": "meta_revenue_2024",
+      "query": "What was Meta's total revenue in fiscal year 2024?",
+      "ticker": "META",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 164501000000.0
+    },
+    {
+      "id": "meta_rd_2024",
+      "query": "How much did Meta spend on research and development in fiscal year 2024?",
+      "ticker": "META",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 43873000000.0
+    },
+    {
+      "id": "meta_net_income_2024",
+      "query": "What was Meta's net income in fiscal year 2024?",
+      "ticker": "META",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 62360000000.0
+    },
+    {
+      "id": "meta_operating_income_2024",
+      "query": "What was Meta's operating income in fiscal year 2024?",
+      "ticker": "META",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 69380000000.0
+    },
+    {
+      "id": "meta_diluted_eps_2024",
+      "query": "What was Meta's diluted earnings per share in fiscal year 2024?",
+      "ticker": "META",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 23.86
+    },
+    {
+      "id": "meta_revenue_2023",
+      "query": "What was Meta's total revenue in fiscal year 2023?",
+      "ticker": "META",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 134902000000.0
+    },
+    {
+      "id": "meta_rd_2023",
+      "query": "How much did Meta spend on research and development in fiscal year 2023?",
+      "ticker": "META",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 38483000000.0
+    },
+    {
+      "id": "meta_net_income_2023",
+      "query": "What was Meta's net income in fiscal year 2023?",
+      "ticker": "META",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 39098000000.0
+    },
+    {
+      "id": "meta_operating_income_2023",
+      "query": "What was Meta's operating income in fiscal year 2023?",
+      "ticker": "META",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 46751000000.0
+    },
+    {
+      "id": "meta_diluted_eps_2023",
+      "query": "What was Meta's diluted earnings per share in fiscal year 2023?",
+      "ticker": "META",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 14.87
+    },
+    {
+      "id": "amzn_revenue_2025",
+      "query": "What was Amazon's total revenue in fiscal year 2025?",
+      "ticker": "AMZN",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 716924000000.0
+    },
+    {
+      "id": "amzn_net_income_2025",
+      "query": "What was Amazon's net income in fiscal year 2025?",
+      "ticker": "AMZN",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 77670000000.0
+    },
+    {
+      "id": "amzn_operating_income_2025",
+      "query": "What was Amazon's operating income in fiscal year 2025?",
+      "ticker": "AMZN",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 79975000000.0
+    },
+    {
+      "id": "amzn_diluted_eps_2025",
+      "query": "What was Amazon's diluted earnings per share in fiscal year 2025?",
+      "ticker": "AMZN",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 7.17
+    },
+    {
+      "id": "amzn_revenue_2024",
+      "query": "What was Amazon's total revenue in fiscal year 2024?",
+      "ticker": "AMZN",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 637959000000.0
+    },
+    {
+      "id": "amzn_net_income_2024",
+      "query": "What was Amazon's net income in fiscal year 2024?",
+      "ticker": "AMZN",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 59248000000.0
+    },
+    {
+      "id": "amzn_operating_income_2024",
+      "query": "What was Amazon's operating income in fiscal year 2024?",
+      "ticker": "AMZN",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 68593000000.0
+    },
+    {
+      "id": "amzn_diluted_eps_2024",
+      "query": "What was Amazon's diluted earnings per share in fiscal year 2024?",
+      "ticker": "AMZN",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 5.53
+    },
+    {
+      "id": "amzn_revenue_2023",
+      "query": "What was Amazon's total revenue in fiscal year 2023?",
+      "ticker": "AMZN",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 574785000000.0
+    },
+    {
+      "id": "amzn_net_income_2023",
+      "query": "What was Amazon's net income in fiscal year 2023?",
+      "ticker": "AMZN",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 30425000000.0
+    },
+    {
+      "id": "amzn_operating_income_2023",
+      "query": "What was Amazon's operating income in fiscal year 2023?",
+      "ticker": "AMZN",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 36852000000.0
+    },
+    {
+      "id": "amzn_diluted_eps_2023",
+      "query": "What was Amazon's diluted earnings per share in fiscal year 2023?",
+      "ticker": "AMZN",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 2.9
+    },
+    {
+      "id": "nvda_revenue_2026",
+      "query": "What was NVIDIA's total revenue in fiscal year 2026?",
+      "ticker": "NVDA",
+      "period_fy": 2026,
+      "concept": "us-gaap_Revenues",
+      "expected_value": 215938000000.0
+    },
+    {
+      "id": "nvda_rd_2026",
+      "query": "How much did NVIDIA spend on research and development in fiscal year 2026?",
+      "ticker": "NVDA",
+      "period_fy": 2026,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 18497000000.0
+    },
+    {
+      "id": "nvda_net_income_2026",
+      "query": "What was NVIDIA's net income in fiscal year 2026?",
+      "ticker": "NVDA",
+      "period_fy": 2026,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 120067000000.0
+    },
+    {
+      "id": "nvda_gross_profit_2026",
+      "query": "What was NVIDIA's gross profit in fiscal year 2026?",
+      "ticker": "NVDA",
+      "period_fy": 2026,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 153463000000.0
+    },
+    {
+      "id": "nvda_operating_income_2026",
+      "query": "What was NVIDIA's operating income in fiscal year 2026?",
+      "ticker": "NVDA",
+      "period_fy": 2026,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 130387000000.0
+    },
+    {
+      "id": "nvda_diluted_eps_2026",
+      "query": "What was NVIDIA's diluted earnings per share in fiscal year 2026?",
+      "ticker": "NVDA",
+      "period_fy": 2026,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 4.9
+    },
+    {
+      "id": "nvda_revenue_2025",
+      "query": "What was NVIDIA's total revenue in fiscal year 2025?",
+      "ticker": "NVDA",
+      "period_fy": 2025,
+      "concept": "us-gaap_Revenues",
+      "expected_value": 130497000000.0
+    },
+    {
+      "id": "nvda_rd_2025",
+      "query": "How much did NVIDIA spend on research and development in fiscal year 2025?",
+      "ticker": "NVDA",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 12914000000.0
+    },
+    {
+      "id": "nvda_net_income_2025",
+      "query": "What was NVIDIA's net income in fiscal year 2025?",
+      "ticker": "NVDA",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 72880000000.0
+    },
+    {
+      "id": "nvda_gross_profit_2025",
+      "query": "What was NVIDIA's gross profit in fiscal year 2025?",
+      "ticker": "NVDA",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 97858000000.0
+    },
+    {
+      "id": "nvda_operating_income_2025",
+      "query": "What was NVIDIA's operating income in fiscal year 2025?",
+      "ticker": "NVDA",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 81453000000.0
+    },
+    {
+      "id": "nvda_diluted_eps_2025",
+      "query": "What was NVIDIA's diluted earnings per share in fiscal year 2025?",
+      "ticker": "NVDA",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 2.94
+    },
+    {
+      "id": "nvda_revenue_2024",
+      "query": "What was NVIDIA's total revenue in fiscal year 2024?",
+      "ticker": "NVDA",
+      "period_fy": 2024,
+      "concept": "us-gaap_Revenues",
+      "expected_value": 60922000000.0
+    },
+    {
+      "id": "nvda_rd_2024",
+      "query": "How much did NVIDIA spend on research and development in fiscal year 2024?",
+      "ticker": "NVDA",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 8675000000.0
+    },
+    {
+      "id": "nvda_net_income_2024",
+      "query": "What was NVIDIA's net income in fiscal year 2024?",
+      "ticker": "NVDA",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 29760000000.0
+    },
+    {
+      "id": "nvda_gross_profit_2024",
+      "query": "What was NVIDIA's gross profit in fiscal year 2024?",
+      "ticker": "NVDA",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 44301000000.0
+    },
+    {
+      "id": "nvda_operating_income_2024",
+      "query": "What was NVIDIA's operating income in fiscal year 2024?",
+      "ticker": "NVDA",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 32972000000.0
+    },
+    {
+      "id": "nvda_diluted_eps_2024",
+      "query": "What was NVIDIA's diluted earnings per share in fiscal year 2024?",
+      "ticker": "NVDA",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 1.19
+    },
+    {
+      "id": "tsla_revenue_2025",
+      "query": "What was Tesla's total revenue in fiscal year 2025?",
+      "ticker": "TSLA",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 94827000000.0
+    },
+    {
+      "id": "tsla_rd_2025",
+      "query": "How much did Tesla spend on research and development in fiscal year 2025?",
+      "ticker": "TSLA",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 6411000000.0
+    },
+    {
+      "id": "tsla_net_income_2025",
+      "query": "What was Tesla's net income in fiscal year 2025?",
+      "ticker": "TSLA",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 3794000000.0
+    },
+    {
+      "id": "tsla_gross_profit_2025",
+      "query": "What was Tesla's gross profit in fiscal year 2025?",
+      "ticker": "TSLA",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 17094000000.0
+    },
+    {
+      "id": "tsla_operating_income_2025",
+      "query": "What was Tesla's operating income in fiscal year 2025?",
+      "ticker": "TSLA",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 4355000000.0
+    },
+    {
+      "id": "tsla_diluted_eps_2025",
+      "query": "What was Tesla's diluted earnings per share in fiscal year 2025?",
+      "ticker": "TSLA",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 1.08
+    },
+    {
+      "id": "tsla_revenue_2024",
+      "query": "What was Tesla's total revenue in fiscal year 2024?",
+      "ticker": "TSLA",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 97690000000.0
+    },
+    {
+      "id": "tsla_rd_2024",
+      "query": "How much did Tesla spend on research and development in fiscal year 2024?",
+      "ticker": "TSLA",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 4540000000.0
+    },
+    {
+      "id": "tsla_net_income_2024",
+      "query": "What was Tesla's net income in fiscal year 2024?",
+      "ticker": "TSLA",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 7091000000.0
+    },
+    {
+      "id": "tsla_gross_profit_2024",
+      "query": "What was Tesla's gross profit in fiscal year 2024?",
+      "ticker": "TSLA",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 17450000000.0
+    },
+    {
+      "id": "tsla_operating_income_2024",
+      "query": "What was Tesla's operating income in fiscal year 2024?",
+      "ticker": "TSLA",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 7076000000.0
+    },
+    {
+      "id": "tsla_diluted_eps_2024",
+      "query": "What was Tesla's diluted earnings per share in fiscal year 2024?",
+      "ticker": "TSLA",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 2.04
+    },
+    {
+      "id": "tsla_revenue_2023",
+      "query": "What was Tesla's total revenue in fiscal year 2023?",
+      "ticker": "TSLA",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 96773000000.0
+    },
+    {
+      "id": "tsla_rd_2023",
+      "query": "How much did Tesla spend on research and development in fiscal year 2023?",
+      "ticker": "TSLA",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 3969000000.0
+    },
+    {
+      "id": "tsla_net_income_2023",
+      "query": "What was Tesla's net income in fiscal year 2023?",
+      "ticker": "TSLA",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 14997000000.0
+    },
+    {
+      "id": "tsla_gross_profit_2023",
+      "query": "What was Tesla's gross profit in fiscal year 2023?",
+      "ticker": "TSLA",
+      "period_fy": 2023,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 17660000000.0
+    },
+    {
+      "id": "tsla_operating_income_2023",
+      "query": "What was Tesla's operating income in fiscal year 2023?",
+      "ticker": "TSLA",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 8891000000.0
+    },
+    {
+      "id": "tsla_diluted_eps_2023",
+      "query": "What was Tesla's diluted earnings per share in fiscal year 2023?",
+      "ticker": "TSLA",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 4.3
+    },
+    {
+      "id": "intc_revenue_2025",
+      "query": "What was Intel's total revenue in fiscal year 2025?",
+      "ticker": "INTC",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 52853000000.0
+    },
+    {
+      "id": "intc_rd_2025",
+      "query": "How much did Intel spend on research and development in fiscal year 2025?",
+      "ticker": "INTC",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 13774000000.0
+    },
+    {
+      "id": "intc_net_income_2025",
+      "query": "What was Intel's net income in fiscal year 2025?",
+      "ticker": "INTC",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": -267000000.0
+    },
+    {
+      "id": "intc_gross_profit_2025",
+      "query": "What was Intel's gross profit in fiscal year 2025?",
+      "ticker": "INTC",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 18375000000.0
+    },
+    {
+      "id": "intc_operating_income_2025",
+      "query": "What was Intel's operating income in fiscal year 2025?",
+      "ticker": "INTC",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": -2214000000.0
+    },
+    {
+      "id": "intc_diluted_eps_2025",
+      "query": "What was Intel's diluted earnings per share in fiscal year 2025?",
+      "ticker": "INTC",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": -0.06
+    },
+    {
+      "id": "intc_revenue_2024",
+      "query": "What was Intel's total revenue in fiscal year 2024?",
+      "ticker": "INTC",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 53101000000.0
+    },
+    {
+      "id": "intc_rd_2024",
+      "query": "How much did Intel spend on research and development in fiscal year 2024?",
+      "ticker": "INTC",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 16546000000.0
+    },
+    {
+      "id": "intc_net_income_2024",
+      "query": "What was Intel's net income in fiscal year 2024?",
+      "ticker": "INTC",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": -18756000000.0
+    },
+    {
+      "id": "intc_gross_profit_2024",
+      "query": "What was Intel's gross profit in fiscal year 2024?",
+      "ticker": "INTC",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 17345000000.0
+    },
+    {
+      "id": "intc_operating_income_2024",
+      "query": "What was Intel's operating income in fiscal year 2024?",
+      "ticker": "INTC",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": -11678000000.0
+    },
+    {
+      "id": "intc_diluted_eps_2024",
+      "query": "What was Intel's diluted earnings per share in fiscal year 2024?",
+      "ticker": "INTC",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": -4.38
+    },
+    {
+      "id": "intc_revenue_2023",
+      "query": "What was Intel's total revenue in fiscal year 2023?",
+      "ticker": "INTC",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 54228000000.0
+    },
+    {
+      "id": "intc_rd_2023",
+      "query": "How much did Intel spend on research and development in fiscal year 2023?",
+      "ticker": "INTC",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 16046000000.0
+    },
+    {
+      "id": "intc_net_income_2023",
+      "query": "What was Intel's net income in fiscal year 2023?",
+      "ticker": "INTC",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 1689000000.0
+    },
+    {
+      "id": "intc_gross_profit_2023",
+      "query": "What was Intel's gross profit in fiscal year 2023?",
+      "ticker": "INTC",
+      "period_fy": 2023,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 21711000000.0
+    },
+    {
+      "id": "intc_operating_income_2023",
+      "query": "What was Intel's operating income in fiscal year 2023?",
+      "ticker": "INTC",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 93000000.0
+    },
+    {
+      "id": "intc_diluted_eps_2023",
+      "query": "What was Intel's diluted earnings per share in fiscal year 2023?",
+      "ticker": "INTC",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 0.4
+    },
+    {
+      "id": "amd_revenue_2025",
+      "query": "What was AMD's total revenue in fiscal year 2025?",
+      "ticker": "AMD",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 34639000000.0
+    },
+    {
+      "id": "amd_rd_2025",
+      "query": "How much did AMD spend on research and development in fiscal year 2025?",
+      "ticker": "AMD",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 8091000000.0
+    },
+    {
+      "id": "amd_net_income_2025",
+      "query": "What was AMD's net income in fiscal year 2025?",
+      "ticker": "AMD",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 4335000000.0
+    },
+    {
+      "id": "amd_gross_profit_2025",
+      "query": "What was AMD's gross profit in fiscal year 2025?",
+      "ticker": "AMD",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 17152000000.0
+    },
+    {
+      "id": "amd_operating_income_2025",
+      "query": "What was AMD's operating income in fiscal year 2025?",
+      "ticker": "AMD",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 3694000000.0
+    },
+    {
+      "id": "amd_diluted_eps_2025",
+      "query": "What was AMD's diluted earnings per share in fiscal year 2025?",
+      "ticker": "AMD",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 2.65
+    },
+    {
+      "id": "amd_revenue_2024",
+      "query": "What was AMD's total revenue in fiscal year 2024?",
+      "ticker": "AMD",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 25785000000.0
+    },
+    {
+      "id": "amd_rd_2024",
+      "query": "How much did AMD spend on research and development in fiscal year 2024?",
+      "ticker": "AMD",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 6456000000.0
+    },
+    {
+      "id": "amd_net_income_2024",
+      "query": "What was AMD's net income in fiscal year 2024?",
+      "ticker": "AMD",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 1641000000.0
+    },
+    {
+      "id": "amd_gross_profit_2024",
+      "query": "What was AMD's gross profit in fiscal year 2024?",
+      "ticker": "AMD",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 12725000000.0
+    },
+    {
+      "id": "amd_operating_income_2024",
+      "query": "What was AMD's operating income in fiscal year 2024?",
+      "ticker": "AMD",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 1900000000.0
+    },
+    {
+      "id": "amd_diluted_eps_2024",
+      "query": "What was AMD's diluted earnings per share in fiscal year 2024?",
+      "ticker": "AMD",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 1.0
+    },
+    {
+      "id": "amd_revenue_2023",
+      "query": "What was AMD's total revenue in fiscal year 2023?",
+      "ticker": "AMD",
+      "period_fy": 2023,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 22680000000.0
+    },
+    {
+      "id": "amd_rd_2023",
+      "query": "How much did AMD spend on research and development in fiscal year 2023?",
+      "ticker": "AMD",
+      "period_fy": 2023,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 5872000000.0
+    },
+    {
+      "id": "amd_net_income_2023",
+      "query": "What was AMD's net income in fiscal year 2023?",
+      "ticker": "AMD",
+      "period_fy": 2023,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 854000000.0
+    },
+    {
+      "id": "amd_gross_profit_2023",
+      "query": "What was AMD's gross profit in fiscal year 2023?",
+      "ticker": "AMD",
+      "period_fy": 2023,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 10460000000.0
+    },
+    {
+      "id": "amd_operating_income_2023",
+      "query": "What was AMD's operating income in fiscal year 2023?",
+      "ticker": "AMD",
+      "period_fy": 2023,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 401000000.0
+    },
+    {
+      "id": "amd_diluted_eps_2023",
+      "query": "What was AMD's diluted earnings per share in fiscal year 2023?",
+      "ticker": "AMD",
+      "period_fy": 2023,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 0.53
+    },
+    {
+      "id": "crm_revenue_2026",
+      "query": "What was Salesforce's total revenue in fiscal year 2026?",
+      "ticker": "CRM",
+      "period_fy": 2026,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 41525000000.0
+    },
+    {
+      "id": "crm_rd_2026",
+      "query": "How much did Salesforce spend on research and development in fiscal year 2026?",
+      "ticker": "CRM",
+      "period_fy": 2026,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 5993000000.0
+    },
+    {
+      "id": "crm_net_income_2026",
+      "query": "What was Salesforce's net income in fiscal year 2026?",
+      "ticker": "CRM",
+      "period_fy": 2026,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 7457000000.0
+    },
+    {
+      "id": "crm_gross_profit_2026",
+      "query": "What was Salesforce's gross profit in fiscal year 2026?",
+      "ticker": "CRM",
+      "period_fy": 2026,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 32255000000.0
+    },
+    {
+      "id": "crm_operating_income_2026",
+      "query": "What was Salesforce's operating income in fiscal year 2026?",
+      "ticker": "CRM",
+      "period_fy": 2026,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 8331000000.0
+    },
+    {
+      "id": "crm_diluted_eps_2026",
+      "query": "What was Salesforce's diluted earnings per share in fiscal year 2026?",
+      "ticker": "CRM",
+      "period_fy": 2026,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 7.8
+    },
+    {
+      "id": "crm_revenue_2025",
+      "query": "What was Salesforce's total revenue in fiscal year 2025?",
+      "ticker": "CRM",
+      "period_fy": 2025,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 37895000000.0
+    },
+    {
+      "id": "crm_rd_2025",
+      "query": "How much did Salesforce spend on research and development in fiscal year 2025?",
+      "ticker": "CRM",
+      "period_fy": 2025,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 5493000000.0
+    },
+    {
+      "id": "crm_net_income_2025",
+      "query": "What was Salesforce's net income in fiscal year 2025?",
+      "ticker": "CRM",
+      "period_fy": 2025,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 6197000000.0
+    },
+    {
+      "id": "crm_gross_profit_2025",
+      "query": "What was Salesforce's gross profit in fiscal year 2025?",
+      "ticker": "CRM",
+      "period_fy": 2025,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 29252000000.0
+    },
+    {
+      "id": "crm_operating_income_2025",
+      "query": "What was Salesforce's operating income in fiscal year 2025?",
+      "ticker": "CRM",
+      "period_fy": 2025,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 7205000000.0
+    },
+    {
+      "id": "crm_diluted_eps_2025",
+      "query": "What was Salesforce's diluted earnings per share in fiscal year 2025?",
+      "ticker": "CRM",
+      "period_fy": 2025,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 6.36
+    },
+    {
+      "id": "crm_revenue_2024",
+      "query": "What was Salesforce's total revenue in fiscal year 2024?",
+      "ticker": "CRM",
+      "period_fy": 2024,
+      "concept": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+      "expected_value": 34857000000.0
+    },
+    {
+      "id": "crm_rd_2024",
+      "query": "How much did Salesforce spend on research and development in fiscal year 2024?",
+      "ticker": "CRM",
+      "period_fy": 2024,
+      "concept": "us-gaap_ResearchAndDevelopmentExpense",
+      "expected_value": 4906000000.0
+    },
+    {
+      "id": "crm_net_income_2024",
+      "query": "What was Salesforce's net income in fiscal year 2024?",
+      "ticker": "CRM",
+      "period_fy": 2024,
+      "concept": "us-gaap_NetIncomeLoss",
+      "expected_value": 4136000000.0
+    },
+    {
+      "id": "crm_gross_profit_2024",
+      "query": "What was Salesforce's gross profit in fiscal year 2024?",
+      "ticker": "CRM",
+      "period_fy": 2024,
+      "concept": "us-gaap_GrossProfit",
+      "expected_value": 26316000000.0
+    },
+    {
+      "id": "crm_operating_income_2024",
+      "query": "What was Salesforce's operating income in fiscal year 2024?",
+      "ticker": "CRM",
+      "period_fy": 2024,
+      "concept": "us-gaap_OperatingIncomeLoss",
+      "expected_value": 5011000000.0
+    },
+    {
+      "id": "crm_diluted_eps_2024",
+      "query": "What was Salesforce's diluted earnings per share in fiscal year 2024?",
+      "ticker": "CRM",
+      "period_fy": 2024,
+      "concept": "us-gaap_EarningsPerShareDiluted",
+      "expected_value": 4.2
+    }
+  ]
+}

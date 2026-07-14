@@ -1,0 +1,15 @@
+{
+  "description": "Starter retrieval golden set for the 3-company pilot corpus (latest 10-K). Each query is labeled by an 'evidence' substring: a chunk is relevant iff it contains that substring (case-insensitive). Transparent and reproducible; to be expanded and hand-audited as the corpus grows. Queries are phrased as analyst questions, not copies of the evidence, to fairly test semantic retrieval.",
+  "queries": [
+    {"id": "q01", "query": "What risks does the company face in producing its hardware and depending on component suppliers?", "evidence": "manufacturing and supply chain risks"},
+    {"id": "q02", "query": "Who are the main competitors to Microsoft Azure in cloud infrastructure?", "evidence": "Azure faces diverse competition"},
+    {"id": "q03", "query": "How is Microsoft embedding generative AI capabilities across its products?", "evidence": "infusing generative AI"},
+    {"id": "q04", "query": "What drove the year-over-year change in Xbox and gaming revenue?", "evidence": "Gaming revenue increased"},
+    {"id": "q05", "query": "Why is switching or adding new suppliers costly and slow for Apple?", "evidence": "require considerable time and resources"},
+    {"id": "q06", "query": "How much of Microsoft's contracted revenue has not yet been recognized?", "evidence": "remaining performance obligations"},
+    {"id": "q07", "query": "How does stock-based compensation affect operating expenses?", "evidence": "stock-based compensation"},
+    {"id": "q08", "query": "What factors caused gross margin to increase?", "evidence": "Gross margin increased"},
+    {"id": "q09", "query": "How did research and development spending change and why?", "evidence": "Research and development expenses"},
+    {"id": "q10", "query": "How is the business exposed to climate change and related regulation?", "evidence": "climate change"}
+  ]
+}

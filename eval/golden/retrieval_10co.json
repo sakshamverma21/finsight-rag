@@ -1,0 +1,34 @@
+{
+  "description": "Company-scoped retrieval golden set for the 10-company corpus (latest 10-K each). Two queries per filer. A chunk is relevant iff it contains the query's 'evidence' phrase matched on WORD BOUNDARIES (naive substring matching is unsafe: 'AWS' matches inside 'laws'). Every evidence phrase was verified to occur in exactly one company's filing, so cross-filer distractors are true negatives — which is what makes metadata pre-filtering measurable. Queries are phrased as analyst questions rather than copies of the evidence.",
+  "queries": [
+    {"id": "aapl_suppliers", "query": "Why is adding or changing suppliers costly and slow for Apple?", "evidence": "require considerable time and resources"},
+    {"id": "aapl_appstore", "query": "What regulatory pressure does Apple face over its App Store?", "evidence": "App Store"},
+
+    {"id": "msft_azure", "query": "Who competes with Microsoft's Azure cloud platform?", "evidence": "Azure faces diverse competition"},
+    {"id": "msft_genai", "query": "How is Microsoft adding generative AI capabilities across its products?", "evidence": "infusing generative AI"},
+
+    {"id": "googl_otherbets", "query": "What are Alphabet's Other Bets and how do they perform financially?", "evidence": "Other Bets"},
+    {"id": "googl_cloud", "query": "How does Alphabet describe its cloud computing business and its growth?", "evidence": "Google Cloud"},
+
+    {"id": "meta_realitylabs", "query": "What is Meta's virtual and augmented reality segment and what does it cost?", "evidence": "Reality Labs"},
+    {"id": "meta_familyofapps", "query": "Which apps make up Meta's main consumer products segment?", "evidence": "Family of Apps"},
+
+    {"id": "amzn_aws", "query": "How does Amazon describe its cloud computing segment?", "evidence": "AWS"},
+    {"id": "amzn_fulfillment", "query": "What risks does Amazon face in its logistics and fulfillment operations?", "evidence": "fulfillment network"},
+
+    {"id": "nvda_cuda", "query": "What is NVIDIA's parallel computing software platform and why does it matter?", "evidence": "CUDA"},
+    {"id": "nvda_hopper", "query": "What does NVIDIA say about its Hopper GPU architecture?", "evidence": "Hopper"},
+
+    {"id": "tsla_deliveries", "query": "What affected Tesla's vehicle delivery volumes?", "evidence": "vehicle deliveries"},
+    {"id": "tsla_credits", "query": "How do regulatory credits contribute to Tesla's automotive results?", "evidence": "automotive regulatory credits"},
+
+    {"id": "intc_foundry", "query": "What is Intel's foundry business and how is it reported?", "evidence": "Intel Foundry"},
+    {"id": "intc_mobileye", "query": "What is Intel's autonomous driving subsidiary?", "evidence": "Mobileye"},
+
+    {"id": "amd_epyc", "query": "What are AMD's server processors for data centers?", "evidence": "EPYC"},
+    {"id": "amd_instinct", "query": "What is AMD's line of AI accelerators?", "evidence": "Instinct"},
+
+    {"id": "crm_subrev", "query": "How does Salesforce describe its subscription revenue?", "evidence": "subscription and support revenues"},
+    {"id": "crm_slack", "query": "What collaboration product does Salesforce offer?", "evidence": "Slack"}
+  ]
+}

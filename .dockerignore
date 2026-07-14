@@ -1,0 +1,26 @@
+# Keep the build context small and the image clean.
+# Anything here is NOT sent to the Docker daemon or copied by COPY.
+
+# The local virtualenv is Windows-specific and huge — the image builds its own.
+.venv/
+
+# Secrets never go in an image (they'd be baked into a layer forever).
+.env
+*.key
+
+# VCS / caches / editor junk
+.git/
+.gitignore
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+
+# Large, regenerable data — the raw filing cache. We COPY only the small artifacts.
+data/raw/
+*.duckdb.wal
+
+# Local outputs and docs not needed at runtime
+eval/results/
+.claude/
+scratchpad/

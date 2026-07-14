@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinSight — retrieval over SEC filings</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #10151c; --muted: #5b6673;
+    --line: #e3e7ec; --accent: #3b5bdb; --accent-soft: #eaeefb;
+    --numeric: #1c7ed6; --numeric-soft: #e7f5ff;
+    --narrative: #2f9e44; --narrative-soft: #ebfbee;
+    --code-bg: #0f1622; --code-ink: #cdd6e4; --cite: #3b5bdb;
+    --shadow: 0 1px 2px rgba(16,21,28,.06), 0 8px 24px rgba(16,21,28,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c1017; --panel: #141b25; --ink: #e8ecf2; --muted: #93a0b1;
+      --line: #232d3a; --accent: #7891ff; --accent-soft: #1a2336;
+      --numeric: #6ab7ff; --numeric-soft: #16273a;
+      --narrative: #69db7c; --narrative-soft: #16301f;
+      --code-bg: #0a0f18; --code-ink: #cdd6e4; --cite: #7891ff;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 40px 20px 80px; }
+  header h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
+  header .tag { color: var(--muted); margin-top: 6px; font-size: 14px; }
+  header .tag b { color: var(--ink); font-weight: 600; }
+
+  form { margin: 26px 0 10px; display: flex; gap: 8px; }
+  input[type=text] {
+    flex: 1; padding: 13px 15px; font-size: 15px; color: var(--ink);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; outline: none;
+  }
+  input[type=text]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  button.ask {
+    padding: 0 20px; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer;
+    background: var(--accent); border: 0; border-radius: 10px;
+  }
+  button.ask:disabled { opacity: .55; cursor: default; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; }
+  .chip {
+    font-size: 12.5px; color: var(--muted); background: var(--panel);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--ink); }
+  .chip b { color: var(--ink); font-weight: 600; }
+
+  .addco { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 4px 0 4px; font-size: 13px; color: var(--muted); }
+  .addco input { width: 150px; padding: 7px 10px; font-size: 13px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; outline: none; text-transform: uppercase; }
+  .addco input:focus { border-color: var(--accent); }
+  .addco button { padding: 7px 12px; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+  .addco button:disabled { opacity: .55; cursor: default; }
+  #addstatus { font-size: 12.5px; }
+  #addstatus .rdy { color: var(--narrative); font-weight: 600; }
+
+  .card {
+    margin-top: 20px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .card .head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .badge { font-size: 11.5px; font-weight: 700; letter-spacing: .04em; padding: 4px 9px; border-radius: 6px; }
+  .badge.NUMERIC { color: var(--numeric); background: var(--numeric-soft); }
+  .badge.NARRATIVE { color: var(--narrative); background: var(--narrative-soft); }
+  .head .meta { margin-left: auto; font-size: 12.5px; color: var(--muted); }
+  .head .meta .ok { color: var(--narrative); font-weight: 600; }
+
+  .body { padding: 18px; }
+  .answer { font-size: 15.5px; line-height: 1.6; white-space: pre-wrap; }
+  .answer .num { font-variant-numeric: tabular-nums; font-weight: 600; }
+  cite-mark, .cite { color: var(--cite); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .section-label { font-size: 11.5px; font-weight: 700; letter-spacing: .05em; color: var(--muted); margin: 20px 0 8px; text-transform: uppercase; }
+  pre.sql {
+    margin: 0; padding: 14px 16px; background: var(--code-bg); color: var(--code-ink);
+    border-radius: 10px; font: 13px/1.5 "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+    overflow-x: auto; white-space: pre;
+  }
+  .sql .kw { color: #7cc4ff; } .sql .str { color: #9ae6a4; }
+
+  .chart svg { display: block; overflow: visible; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .tblwrap { overflow-x: auto; }
+  table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.dt th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: .03em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  table.dt td { padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  table.dt .r { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  .sources { display: flex; flex-direction: column; gap: 4px; }
+  .src { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font-size: 13px; }
+  .src.cited { border-color: var(--accent); background: var(--accent-soft); }
+  .src .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex: none; }
+  .src.cited .dot { background: var(--accent); }
+  .src .tkr { font-weight: 700; }
+  .src .sec { color: var(--muted); }
+  .src .id { margin-left: auto; color: var(--muted); font: 11.5px ui-monospace, monospace; }
+
+  .status { margin-top: 20px; padding: 14px 16px; border-radius: 10px; font-size: 14px; }
+  .status.loading { background: var(--accent-soft); color: var(--accent); }
+  .status.error { background: var(--numeric-soft); color: var(--numeric); border: 1px solid currentColor; }
+  .spin { display: inline-block; width: 13px; height: 13px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: s .7s linear infinite; vertical-align: -2px; margin-right: 8px; }
+  @keyframes s { to { transform: rotate(360deg); } }
+
+  footer { margin-top: 40px; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+  footer code { font: 12px ui-monospace, monospace; background: var(--panel); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>FinSight</h1>
+    <div class="tag">Ask about <b>SEC 10-K filings</b> from 10 large-cap tech companies. Numeric questions are answered from <b>structured XBRL data via generated SQL</b> (exact, to the dollar); narrative questions via <b>hybrid retrieval + reranking</b> with grounded citations.</div>
+  </header>
+
+  <form id="form">
+    <input id="q" type="text" autocomplete="off" placeholder="e.g. What was NVIDIA's R&D expense in fiscal year 2025?">
+    <button class="ask" id="ask" type="submit">Ask</button>
+  </form>
+
+  <div class="chips" id="chips">
+    <span class="chip" data-q="What was Apple's total revenue in fiscal year 2023?"><b>NUMERIC</b> · Apple revenue FY2023</span>
+    <span class="chip" data-q="How much did Microsoft spend on research and development in fiscal year 2024?"><b>NUMERIC</b> · Microsoft R&D FY2024</span>
+    <span class="chip" data-q="Compare Apple, Microsoft and Google total revenue for fiscal years 2023 and 2024"><b>COMPARE</b> · AAPL vs MSFT vs GOOGL revenue</span>
+    <span class="chip" data-q="What supply chain risks does Apple disclose?"><b>NARRATIVE</b> · Apple supply-chain risks</span>
+    <span class="chip" data-q="How is Microsoft embedding generative AI across its products?"><b>NARRATIVE</b> · Microsoft & generative AI</span>
+  </div>
+
+  <div class="addco">
+    <span>Company not listed?</span>
+    <input id="tk" type="text" placeholder="ticker, e.g. ORCL" maxlength="6" autocomplete="off">
+    <button id="addbtn" type="button">Add company</button>
+    <span id="addstatus"></span>
+  </div>
+
+  <div id="out"></div>
+
+  <footer>
+    Two-stage retrieval + agentic routing over SEC EDGAR filings · answers cite their source row or chunk ·
+    served from a single FastAPI container. Try the API directly:
+    <code>POST /query {"question": "..."}</code>
+  </footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const out = $('#out'), form = $('#form'), q = $('#q'), ask = $('#ask');
+
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const citeUp = s => esc(s).replace(/\[(\d+)\]/g, '<span class="cite">[$1]</span>');
+function sqlHi(s){
+  return esc(s)
+    .replace(/\b(SELECT|FROM|WHERE|AND|OR|IS|NULL|ORDER BY|GROUP BY|LIMIT|AS|NOT|IN)\b/g, '<span class="kw">$1</span>')
+    .replace(/'([^']*)'/g, "<span class=\"str\">'$1'</span>");
+}
+
+// --- comparison table + chart for numeric results ---
+const COLORS = ['#3b5bdb','#1c9c6b','#e8590c','#9c36b5','#1c7ed6','#e03131','#f08c00'];
+
+function fmtCell(v, label){
+  if (typeof v !== 'number') return esc(String(v ?? ''));
+  const per = (label||'').toLowerCase().includes('per share');
+  if (per || Math.abs(v) < 1000) return '$' + v.toFixed(2);
+  if (Math.abs(v) >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
+  if (Math.abs(v) >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
+  return '$' + Math.round(v).toLocaleString();
+}
+function unitOf(max){
+  if (max >= 1e9) return {d:1e9, s:'B'};
+  if (max >= 1e6) return {d:1e6, s:'M'};
+  if (max >= 1e3) return {d:1e3, s:'K'};
+  return {d:1, s:''};
+}
+// Different companies label the same metric differently ("Net sales" vs "Revenue"
+// vs "Revenues"); normalize so we can chart one metric at a time.
+function metricOf(label){
+  const l = (label||'').toLowerCase();
+  if (/net sales|revenue|revenues/.test(l)) return 'Revenue';
+  if (/gross (profit|margin)/.test(l)) return 'Gross profit';
+  if (/net income|net loss/.test(l)) return 'Net income';
+  if (/operating income|income from operations/.test(l)) return 'Operating income';
+  if (/research and development/.test(l)) return 'R&D expense';
+  if (/per share|earnings per share/.test(l)) return 'Diluted EPS';
+  return label || 'Value';
+}
+
+function chartSVG(rows, title){
+  const tickers = [...new Set(rows.map(r=>r.ticker))];
+  const years = [...new Set(rows.map(r=>r.period_fy).filter(y=>y!=null))].sort((a,b)=>a-b);
+  const byYear = years.length >= 2;
+  const xCats = byYear ? years : tickers;
+  const series = byYear ? tickers : [''];
+  const valOf = byYear
+    ? (x,s)=>{ const r = rows.find(r=>r.period_fy===x && r.ticker===s); return r?r.value:null; }
+    : (x,_)=>{ const r = rows.find(r=>r.ticker===x); return r?r.value:null; };
+
+  const max = Math.max(...rows.map(r=>Math.abs(r.value))) * 1.12 || 1;
+  const u = unitOf(max), lbl = rows[0].label;
+  const W=640,H=250,mL=48,mR=12,mT=14,mB=34, plotW=W-mL-mR, plotH=H-mT-mB;
+  const n=xCats.length, s=series.length, groupW=plotW/n, pad=groupW*0.16, gap=5;
+  const barW=Math.max(4,(groupW-2*pad-(s-1)*gap)/s);
+  const M='style="fill:var(--muted)"', L='style="stroke:var(--line)"';
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="comparison chart">`;
+  for(let i=0;i<=4;i++){
+    const y=mT+plotH-(plotH*i/4), v=max*i/4;
+    svg+=`<line x1="${mL}" y1="${y}" x2="${W-mR}" y2="${y}" ${L} stroke-width="1"/>`;
+    svg+=`<text x="${mL-6}" y="${y+3}" text-anchor="end" font-size="10" ${M}>${(v/u.d).toFixed(v>=u.d?0:1)}</text>`;
+  }
+  xCats.forEach((x,gi)=>{
+    const gx=mL+gi*groupW+pad;
+    series.forEach((se,si)=>{
+      const v=valOf(x,se); if(v==null) return;
+      const h=plotH*Math.abs(v)/max, bx=gx+si*(barW+gap), by=mT+plotH-h;
+      const color=COLORS[(byYear?si:gi)%COLORS.length];
+      svg+=`<rect x="${bx}" y="${by}" width="${barW}" height="${Math.max(h,1)}" rx="2" fill="${color}"><title>${esc(String(se||x))} ${esc(String(x))}: ${fmtCell(v,lbl)}</title></rect>`;
+    });
+    svg+=`<text x="${mL+gi*groupW+groupW/2}" y="${H-mB+16}" text-anchor="middle" font-size="10.5" ${M}>${esc(String(x))}</text>`;
+  });
+  svg+=`</svg>`;
+  const legend = byYear
+    ? `<div class="legend">${tickers.map((t,i)=>`<span><i style="background:${COLORS[i%COLORS.length]}"></i>${esc(t)}</span>`).join('')}</div>` : '';
+  const head = (title || 'Chart') + (u.s ? ` · values in $${u.s}` : '');
+  return `<div class="section-label">${esc(head)}</div><div class="chart">${svg}</div>${legend}`;
+}
+
+function dataTable(rows){
+  let t=`<div class="section-label">Data</div><div class="tblwrap"><table class="dt"><thead><tr><th>Company</th><th>FY</th><th>Metric</th><th class="r">Value</th></tr></thead><tbody>`;
+  for(const r of rows) t+=`<tr><td>${esc(r.ticker||'')}</td><td>${esc(String(r.period_fy??''))}</td><td>${esc(r.label||'')}</td><td class="r">${fmtCell(r.value,r.label)}</td></tr>`;
+  return t+`</tbody></table></div>`;
+}
+
+function renderViz(data){
+  const rows = data.filter(r => typeof r.value === 'number');
+  if (rows.length < 2) return '';
+  // One chart per metric — never mix revenue and gross profit on the same axis.
+  const groups = {};
+  for (const r of rows){ (groups[metricOf(r.label)] ||= []).push(r); }
+  let out = '';
+  for (const [metric, g] of Object.entries(groups)){
+    if (g.length >= 2) out += chartSVG(g, metric);
+  }
+  // Honest note if the grid isn't fully populated (a metric a company doesn't
+  // report, or a fiscal year not in our corpus).
+  const tks = new Set(rows.map(r=>r.ticker)).size;
+  const yrs = new Set(rows.map(r=>r.period_fy)).size;
+  const mets = Object.keys(groups).length;
+  if (rows.length < tks * yrs * mets)
+    out += `<div style="font-size:12px;color:var(--muted);margin-top:8px">Some cells are unavailable — a company may not report that metric, or that fiscal year isn't in our data yet.</div>`;
+  return out + dataTable(rows);
+}
+
+function render(d){
+  let meta;
+  if (d.cached) {
+    meta = `⚡ <b>cached</b> &nbsp;·&nbsp; ${Math.round(d.latency_ms)}ms &nbsp;·&nbsp; no LLM call`;
+  } else {
+    const secs = (d.latency_ms/1000).toFixed(1);
+    const sys = Math.round(d.system_ms);
+    const llm = (d.llm_ms/1000).toFixed(1);
+    const thr = d.throttle_ms > 200 ? ` · +${(d.throttle_ms/1000).toFixed(1)}s throttle` : '';
+    meta = `${secs}s &nbsp;·&nbsp; <b>${sys}ms</b> system + <b>${llm}s</b> LLM${thr}`;
+  }
+  if (d.route === 'NARRATIVE' && d.citations_valid !== null)
+    meta += d.citations_valid ? ' · <span class="ok">✓ citations verified</span>' : ' · citations flagged';
+
+  let inner = `<div class="head"><span class="badge ${d.route}">${d.route}</span>
+      <span style="color:var(--muted);font-size:12.5px">${d.route==='NUMERIC'?'text-to-SQL over facts':'hybrid retrieval + reranker'}</span>
+      <span class="meta">${meta}</span></div><div class="body">`;
+
+  inner += `<div class="answer">${d.route==='NUMERIC' ? esc(d.answer.trim()).replace(/\n/g,'<br>') : citeUp(d.answer)}</div>`;
+
+  if (d.route === 'NUMERIC' && d.data && d.data.length >= 2){
+    inner += renderViz(d.data);
+  }
+
+  if (d.route === 'NUMERIC' && d.sql){
+    inner += `<div class="section-label">Generated SQL</div><pre class="sql">${sqlHi(d.sql)}</pre>`;
+  }
+  if (d.route === 'NARRATIVE' && d.sources.length){
+    inner += `<div class="section-label">Sources · ${d.sources.filter(s=>s.cited).length} cited</div><div class="sources">`;
+    for (const s of d.sources){
+      inner += `<div class="src ${s.cited?'cited':''}"><span class="dot"></span>
+        <span class="tkr">${esc(s.ticker)}</span><span class="sec">${esc(s.section)}</span>
+        <span class="id">${esc(s.chunk_id)}</span></div>`;
+    }
+    inner += `</div>`;
+  }
+  inner += `</div>`;
+  out.innerHTML = `<div class="card">${inner}</div>`;
+}
+
+async function run(question, autoIngested){
+  q.value = question;
+  ask.disabled = true;
+  out.innerHTML = `<div class="status loading"><span class="spin"></span>Routing & answering…</div>`;
+  try {
+    const r = await fetch('/query', {
+      method: 'POST', headers: {'content-type': 'application/json'},
+      body: JSON.stringify({ question })
+    });
+    if (r.status === 429){ out.innerHTML = `<div class="status error">Rate limited by the LLM provider (free tier). Give it a moment and try again.</div>`; return; }
+    if (r.status === 503){ out.innerHTML = `<div class="status error">Service is still loading its models. Try again in a few seconds.</div>`; return; }
+    if (!r.ok){ const e = await r.json().catch(()=>({})); out.innerHTML = `<div class="status error">Error ${r.status}: ${esc(e.detail||'request failed')}</div>`; return; }
+    const d = await r.json();
+    if (d.route === 'INGESTING' && !autoIngested){ await autoIngestThenRetry(d, question); return; }
+    render(d);
+  } catch (e){
+    out.innerHTML = `<div class="status error">Network error: ${esc(String(e))}</div>`;
+  } finally { ask.disabled = false; }
+}
+
+async function autoIngestThenRetry(d, question){
+  const tk = d.pending_ticker;
+  const base = esc(d.answer);
+  const t0 = Date.now();
+  const tick = () => {
+    const s = Math.round((Date.now() - t0) / 1000);
+    out.innerHTML = `<div class="status loading"><span class="spin"></span>${base}` +
+      ` <span style="opacity:.65">(${s}s — big filings can take a couple of minutes)</span></div>`;
+  };
+  tick();
+  // Large financial-firm 10-Ks (400-600+ chunks) can take 1-2 min to fetch + embed.
+  while (Date.now() - t0 < 300000){
+    await new Promise(r => setTimeout(r, 2500));
+    let s;
+    try { s = await (await fetch('/ingest/' + tk)).json(); } catch { tick(); continue; }
+    if (s.status === 'ready'){ return run(question, true); }   // re-ask; company now known
+    if (String(s.status).startsWith('error')){
+      out.innerHTML = `<div class="status error">Couldn't fetch SEC filings for ${esc(tk)} — it may not file a standard 10-K. (${esc(s.status)})</div>`;
+      return;
+    }
+    tick();
+  }
+  out.innerHTML = `<div class="status error">${esc(tk)}'s filing is large and still processing in the background — ask your question again in a moment and it should be ready.</div>`;
+}
+
+form.addEventListener('submit', e => { e.preventDefault(); if (q.value.trim()) run(q.value.trim()); });
+$('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) run(c.dataset.q); });
+
+// --- add a company on demand ---
+const tk = $('#tk'), addbtn = $('#addbtn'), addstatus = $('#addstatus');
+async function addCompany(){
+  const ticker = tk.value.trim().toUpperCase();
+  if (!ticker) return;
+  addbtn.disabled = true;
+  addstatus.innerHTML = `<span class="spin"></span>fetching &amp; embedding ${ticker}… (~30s)`;
+  try {
+    const r = await fetch('/ingest', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ ticker }) });
+    const j = await r.json();
+    if (r.status !== 202 && j.status !== 'ready'){ addstatus.textContent = 'could not start: ' + (j.detail||j.status||'error'); addbtn.disabled=false; return; }
+    // poll
+    const t0 = Date.now();
+    while (Date.now() - t0 < 120000){
+      const s = await (await fetch('/ingest/' + ticker)).json();
+      if (s.status === 'ready'){ addstatus.innerHTML = `<span class="rdy">✓ ${ticker} ready</span> — ask a question about it`; tk.value=''; break; }
+      if (String(s.status).startsWith('error')){ addstatus.textContent = ticker + ': ' + s.status; break; }
+      await new Promise(r => setTimeout(r, 2500));
+    }
+  } catch (e){ addstatus.textContent = 'error: ' + e; }
+  finally { addbtn.disabled = false; }
+}
+addbtn.addEventListener('click', addCompany);
+tk.addEventListener('keydown', e => { if (e.key === 'Enter') addCompany(); });
+</script>
+</body>
+</html>

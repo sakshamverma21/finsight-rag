@@ -1,0 +1,45 @@
+[project]
+name = "finsight-rag"
+version = "0.1.0"
+description = "Latency-aware, numerically-correct, agentic retrieval over SEC filings"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "edgartools>=5.40",
+    "duckdb>=1.1",
+    "pandas>=2.0",
+    "python-dotenv>=1.0",
+    "litellm>=1.90",
+    "sentence-transformers>=3.0",
+    "rank-bm25>=0.2",
+    "numpy>=1.26",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "torch>=2.2",
+    "redis>=5.0",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.6", "ipython>=8"]
+
+# Pin PyTorch to the CPU-only wheels. The default Linux torch wheel bundles CUDA
+# (~2-3 GB installed); we serve on CPU, so the CPU wheel (~180 MB) keeps the
+# container small. This resolves to CPU wheels on both Windows and Linux.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["finsight"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

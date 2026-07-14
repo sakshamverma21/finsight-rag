@@ -1,0 +1,30 @@
+# Run the whole stack with: docker compose up --build
+#
+# Two containers on one private network. `api` reaches `redis` by the service
+# name "redis" (compose gives each service a DNS name) — that's why REDIS_URL
+# uses host "redis", not "localhost".
+
+services:
+  redis:
+    image: redis:7-alpine        # tiny (~40 MB); the shared rate limiter + L1 cache
+    ports:
+      - "6379:6379"              # exposed for local inspection; not required by the app
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"              # host:container — reach the API at localhost:8000
+    env_file:
+      - .env                     # GROQ_API_KEY etc. injected at RUNTIME, never baked
+    environment:
+      - FINSIGHT_THROTTLE_MAX_WAIT_S=8
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy   # don't start api until redis answers PING
+    restart: unless-stopped
