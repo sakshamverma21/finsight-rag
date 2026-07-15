@@ -12,6 +12,7 @@ import re
 
 from finsight.config import LLM_MODEL
 from finsight.llm import chat
+from finsight.retrieval.metadata_filter import extract_filters
 
 # --- Rule-based fast path (no LLM call) ------------------------------------
 # The router LLM call is ~880ms (mostly network RTT). Most real queries carry an
@@ -29,12 +30,30 @@ _NARRATIVE_CUE = re.compile(
     r"competit\w*|compete|overview|business model|outlook|challenge\w*|opportunit\w*|"
     r"concern\w*|trend\w*|driver\w*|approach)\b", re.I,
 )
+# Multi-hop signal: an explicit comparison/contrast word, or two+ named companies. Note
+# "how do" is deliberately NOT here (it matches single-company "how does Apple ...").
+_COMPARE_CUE = re.compile(
+    r"\b(compare|compared to|comparison|versus|vs\.?|differ|differs|difference|"
+    r"differences|contrast|which of|relative to|both companies)\b", re.I,
+)
+
+
+def _is_multihop(query: str) -> bool:
+    """A narrative query is multi-hop if it compares, or spans two+ companies."""
+    if _COMPARE_CUE.search(query):
+        return True
+    try:
+        return len(extract_filters(query).get("tickers") or []) >= 2
+    except Exception:
+        return False
 
 
 def heuristic_route(query: str) -> str | None:
-    """NUMERIC / NARRATIVE if the signal is unambiguous, else None (defer to LLM)."""
+    """NUMERIC / NARRATIVE / MULTI_HOP if unambiguous, else None (defer to LLM)."""
     metric = bool(_METRIC.search(query))
     narrative = bool(_NARRATIVE_CUE.search(query))
+    if narrative and not metric and _is_multihop(query):
+        return "MULTI_HOP"
     if metric and not narrative:
         return "NUMERIC"
     if narrative and not metric:
@@ -83,12 +102,14 @@ ROUTER_PROMPT = """Classify the financial query into exactly one type:
 - NUMERIC: asks for a specific reported figure/metric (revenue, R&D, EPS, net income,
   gross margin, operating income, assets, cash, etc.) for a company/period. Answerable
   from a single financial-statement number.
-- NARRATIVE: asks for qualitative or explanatory content (risks, strategy, why a metric
-  changed, business descriptions, competition).
+- NARRATIVE: asks for qualitative or explanatory content about ONE company/topic (risks,
+  strategy, why a metric changed, business descriptions, competition).
+- MULTI_HOP: needs evidence from MULTIPLE companies or MULTIPLE distinct sub-topics to
+  answer fully (e.g. comparing two companies' risks, or a question with several parts).
 
 Query: {query}
 
-Return ONLY JSON: {{"type": "NUMERIC" | "NARRATIVE"}}"""
+Return ONLY JSON: {{"type": "NUMERIC" | "NARRATIVE" | "MULTI_HOP"}}"""
 
 
 def classify(query: str, model: str = LLM_MODEL) -> str:
@@ -98,6 +119,10 @@ def classify(query: str, model: str = LLM_MODEL) -> str:
     )
     try:
         t = json.loads(text).get("type", "NARRATIVE").upper()
-        return "NUMERIC" if t == "NUMERIC" else "NARRATIVE"
+        if t == "NUMERIC":
+            return "NUMERIC"
+        if t == "MULTI_HOP":
+            return "MULTI_HOP"
+        return "NARRATIVE"
     except (json.JSONDecodeError, AttributeError):
         return "NARRATIVE"

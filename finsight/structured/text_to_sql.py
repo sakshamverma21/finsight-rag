@@ -92,6 +92,7 @@ class NumericAnswer:
     text: str = ""
     latency_ms: float = 0.0
     error: str | None = None
+    trend: list = field(default_factory=list)  # multi-year series for a single (ticker, concept)
 
 
 def _concept_rows(con, tickers: list[str] | None, embedder=None) -> tuple[list[tuple[str, str]], np.ndarray]:
@@ -236,6 +237,48 @@ def _run(con, sql: str) -> tuple[list[str], list[tuple]]:
     return [d[0] for d in cur.description], cur.fetchmany(25)
 
 
+# --- Multi-year trend (deterministic, no LLM) -----------------------------
+# When an answer resolves to a single (ticker, concept), the facts table already
+# holds every fiscal year that filing reported (~3 years). We surface that series so
+# a single figure gains context — a sparkline + YoY — without a second model call.
+_CONCEPTS_ANY = re.compile(r"concept\s*(?:=\s*'([^']+)'|IN\s*\(([^)]*)\))", re.I)
+
+
+def _sql_concepts(sql: str) -> set[str]:
+    cs: set[str] = set()
+    for m in _CONCEPTS_ANY.finditer(sql):
+        if m.group(1):
+            cs.add(m.group(1))
+        elif m.group(2):
+            cs |= {x.strip().strip("'") for x in m.group(2).split(",") if x.strip()}
+    return cs
+
+
+def _metric_series(con, ticker: str, concept: str) -> list[dict]:
+    q = ("SELECT period_fy, value, label, period_end FROM facts "
+         "WHERE ticker = ? AND concept = ? AND dimension_member IS NULL "
+         "AND period_fy IS NOT NULL AND value IS NOT NULL ORDER BY period_fy")
+    return [
+        {"ticker": ticker, "period_fy": fy, "value": val, "label": lab, "period_end": pe}
+        for fy, val, lab, pe in con.execute(q, [ticker, concept]).fetchall()
+    ]
+
+
+def _trend_for(con, columns: list[str], rows: list[tuple], sql: str) -> list[dict]:
+    """A year-over-year series, but only when the answer is one ticker + one concept."""
+    try:
+        if "ticker" not in columns:
+            return []
+        tickers_in = {r[columns.index("ticker")] for r in rows}
+        concepts = _sql_concepts(sql)
+        if len(tickers_in) == 1 and len(concepts) == 1:
+            series = _metric_series(con, next(iter(tickers_in)), next(iter(concepts)))
+            return series if len(series) >= 2 else []
+    except Exception:
+        return []
+    return []
+
+
 def answer_numeric(query: str, tickers: list[str] | None = None,
                    model: str = LLM_MODEL, db_path=DB_PATH, repair: bool = True,
                    embedder=None, fiscal_years=None) -> NumericAnswer:
@@ -278,7 +321,8 @@ def answer_numeric(query: str, tickers: list[str] | None = None,
             return NumericAnswer(query, sql, columns, rows,
                                  "The structured financial data contains no matching figure.",
                                  _elapsed_ms(t0), error=problem)
-        return NumericAnswer(query, sql, columns, rows, _format_rows(columns, rows), _elapsed_ms(t0))
+        return NumericAnswer(query, sql, columns, rows, _format_rows(columns, rows), _elapsed_ms(t0),
+                             trend=_trend_for(con, columns, rows, sql))
     except Exception as e:
         return NumericAnswer(query, sql, text="Could not answer from structured data.",
                              latency_ms=_elapsed_ms(t0), error=f"{type(e).__name__}: {e}")

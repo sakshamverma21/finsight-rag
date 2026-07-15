@@ -1,0 +1,11 @@
+{
+  "description": "Multi-hop narrative queries: each names 2 companies, so a complete answer must draw evidence from BOTH. Metric = company coverage (fraction of required companies present in the retrieved / cited sources). Config E (agentic decompose + per-hop retrieve + recovery) vs single-pass narrative.",
+  "queries": [
+    {"id": "aapl_msft_supply_risk", "query": "How do Apple's and Microsoft's supply-chain risks differ?", "companies": ["AAPL", "MSFT"]},
+    {"id": "googl_msft_ai", "query": "Compare how Google and Microsoft describe their artificial intelligence strategies.", "companies": ["GOOGL", "MSFT"]},
+    {"id": "nvda_amd_competition", "query": "What competitive risks do Nvidia and AMD each highlight in their filings?", "companies": ["NVDA", "AMD"]},
+    {"id": "meta_googl_ads", "query": "How do Meta and Google each describe risks to their advertising businesses?", "companies": ["META", "GOOGL"]},
+    {"id": "amzn_msft_cloud", "query": "Contrast Amazon's and Microsoft's cloud-computing competition risks.", "companies": ["AMZN", "MSFT"]},
+    {"id": "tsla_aapl_manufacturing", "query": "How do Tesla and Apple each describe manufacturing and production risks?", "companies": ["TSLA", "AAPL"]}
+  ]
+}

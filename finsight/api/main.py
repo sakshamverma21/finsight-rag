@@ -77,6 +77,9 @@ class QueryResponse(BaseModel):
     sources: list[SourceOut] = []
     sql: str | None = None
     data: list[dict] = []    # structured rows behind a NUMERIC answer (for tables/charts)
+    trend: list[dict] = []   # multi-year series for a single figure (deterministic, no LLM)
+    subquestions: list[str] = []  # MULTI_HOP: the agentic decomposition
+    steps: list[dict] = []        # MULTI_HOP: per-hop retrieval trace (query, n_sources)
     citations_valid: bool | None = None
 
 
@@ -229,8 +232,9 @@ def query(req: QueryRequest, background: BackgroundTasks) -> QueryResponse:
     if routed.route == "NUMERIC":
         # Expose the SQL result rows so the UI can render a table / chart.
         data = [dict(zip(payload.columns, r)) for r in payload.rows] if payload.rows else []
-        resp = QueryResponse(**common, answer=payload.text, sql=payload.sql or None, data=data)
-    else:
+        resp = QueryResponse(**common, answer=payload.text, sql=payload.sql or None, data=data,
+                             trend=getattr(payload, "trend", []) or [])
+    else:  # NARRATIVE or MULTI_HOP — both are grounded, cited answers
         resp = QueryResponse(
             **common, answer=payload.text,
             citations_valid=bool(payload.citation_valid),
@@ -239,6 +243,8 @@ def query(req: QueryRequest, background: BackgroundTasks) -> QueryResponse:
                           section=s.section, cited=s.n in payload.cited)
                 for s in payload.sources
             ],
+            subquestions=getattr(payload, "subquestions", []),
+            steps=getattr(payload, "steps", []),
         )
 
     # Cache only successful answers — never a failed/empty numeric result, or we'd

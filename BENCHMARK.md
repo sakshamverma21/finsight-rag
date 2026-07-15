@@ -130,6 +130,39 @@ Shipped at **K=25 + a always-included core-concept union** (revenue, net income,
 operating income, R&D). The margin over K=20 is deliberate: golden queries are *templated* and mirror
 the concept labels, so `recall = 1.000` is optimistic for free-form analyst phrasing.
 
+## Config E — agentic multi-hop retrieval (multi-hop golden set)
+
+Golden set: `eval/golden/multihop.json` — 6 narrative queries that each name **two**
+companies (e.g. "how do Apple's and Microsoft's supply-chain risks differ?"), so a
+complete answer must draw evidence from **both**. Config E decomposes the question,
+retrieves per company, checks sufficiency, and re-retrieves the gap; single-pass runs one
+query vector. Reproduce with `uv run python scripts/run_multihop_eval.py`.
+
+| metric | single-pass | multi-hop (Config E) |
+|---|---|---|
+| naive coverage (one query vector, **no** prefilter) | 0.917 | — |
+| company coverage (metadata prefilter **on**) | **1.000** | **1.000** |
+| evidence balance (min sources per company, k=8) | 2.83 | **4.00** |
+| recovery step fired | — | **6 / 6** |
+| median latency | 3.1 s | 10.2 s |
+
+**The honest read — the obvious metric saturates, so it isn't the story.** Once the
+metadata pre-filter scopes retrieval to the two named companies, *company coverage* is
+1.000 for single-pass too — the pre-filter, not the agent, earns that. The metric that
+actually separates them is **evidence balance**: single-pass fills its top-8 lopsidedly
+(the reranker favours whichever company the blended query vector sits closer to — as few
+as **2** sources for the weaker company), while per-hop retrieval returns a balanced
+**4 / 4 every time**, ~40% more evidence on the weak leg of the comparison. And the *naive*
+single-pass baseline (no pre-filter, the standard-RAG default) drops a company **8% of the
+time**. Config E always covers both, always balanced, with its sufficiency check firing a
+recovery retrieval on all 6 — at an honest latency cost (10.2 s vs 3.1 s), which is why it
+is reserved for queries the router classifies MULTI_HOP, not the default path.
+
+> **Scope caveat.** 6 queries, all two-company comparisons; the balance gap should widen on
+> 3+ company or genuinely multi-part questions where a single query vector has even less
+> chance of spreading its budget evenly. This is a directional result on a small set, not a
+> universal claim.
+
 ## Latency optimizations (serving)
 
 Measured warm, per request, split into system (ours) vs LLM (provider, swappable):
@@ -149,8 +182,6 @@ Honest note: LLM inference (~1–2 s) is the remaining floor and is provider-dep
 compute — instrumented as `llm_ms` vs `system_ms` per request.
 
 ## Pending configs
-- **D (re-run)** — confirm 168/168 after the repair loop.
-- **E** — agentic iterative retrieval (measured on multi-hop queries)
 - **F** — BGE-M3 embeddings + BGE-reranker-v2 (H100 batch) vs the light online stack
 
 ## Known levers (tracked in DEVLOG)

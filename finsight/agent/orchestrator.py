@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from finsight.agent.multihop import answer_multihop
 from finsight.agent.router import route as route_query
 from finsight.generation.generator import Generator
 from finsight.retrieval.metadata_filter import extract_filters
@@ -32,6 +33,8 @@ class Orchestrator:
             payload = answer_numeric(
                 query, tickers=filters["tickers"], fiscal_years=filters["fiscal_years"],
                 embedder=self.generator.retriever.embedder)
+        elif route == "MULTI_HOP":
+            payload = answer_multihop(query, self.generator.retriever)
         else:
             payload = self.generator.answer(query)
         return RoutedAnswer(query, route, used_llm, payload)
