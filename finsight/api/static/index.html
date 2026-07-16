@@ -99,7 +99,7 @@
     padding: 22px 20px 26px; display: flex; flex-direction: column; gap: 24px;
   }
   .main { grid-area: main; padding: 22px 34px 90px; }
-  .main-inner { max-width: 860px; margin: 0 auto; }
+  .main-inner { max-width: 860px; margin: 0 auto; position: relative; }
 
   /* ---------- sidebar ---------- */
   .s-brand { display: flex; align-items: center; gap: 11px; }
@@ -149,9 +149,17 @@
   .iconbtn:hover { border-color: var(--line-2); color: var(--ink); }
 
   .hero { margin: 20px 0 4px; }
-  .hero h2 { margin: 0; font-size: 30px; line-height: 1.2; letter-spacing: -.03em; font-weight: 700; }
+  .hero h2 { margin: 0; font-size: 30px; line-height: 1.2; letter-spacing: -.03em; font-weight: 700; padding-right: 52px; }
   .hero h2 .g { color: var(--accent); }
   .hero p { margin: 12px 0 0; color: var(--ink-2); font-size: 15px; max-width: 64ch; }
+
+  /* Desktop: float the theme toggle out of the flow. Otherwise its 38px row pushes the
+     hero down ~58px, so the main column starts well below the sidebar's brand text and
+     the top-left reads as dead space. Floating it lets the two columns start level. */
+  @media (min-width: 901px) {
+    .maintop { position: absolute; top: 0; right: 0; margin-bottom: 0; }
+    .hero { margin-top: 0; }
+  }
 
   /* ---------- the ask panel (focal) ---------- */
   .askpanel { margin: 22px 0 0; background: var(--panel); border: 1px solid var(--line-2); border-radius: 18px; padding: 20px; box-shadow: var(--shadow-md); }
@@ -179,10 +187,15 @@
   .chip:hover { border-color: var(--accent-line); color: var(--ink); background: var(--accent-soft); }
   .chip b { color: var(--accent); font-weight: 700; font-size: 10.5px; letter-spacing: .04em; }
 
-  /* ---------- comparison builder ---------- */
-  .builder-toggle { margin-top: 14px; display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--accent); background: transparent; border: 0; cursor: pointer; padding: 4px 0; }
+  /* ---------- panel toggles (examples · comparison builder) ---------- */
+  .panel-toggles { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 14px; }
+  .builder-toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--accent); background: transparent; border: 0; cursor: pointer; padding: 4px 0; }
   .builder-toggle svg { transition: transform .2s; }
   .builder-toggle.open svg { transform: rotate(45deg); }
+  .builder-toggle.collapsed .chev { transform: rotate(-90deg); }
+  /* These MUST beat the `display:flex` rules below: an author display rule overrides
+     the UA's `[hidden] { display: none }`, so `hidden` alone would silently do nothing. */
+  .chips[hidden], .builder[hidden] { display: none; }
   .builder { margin-top: 12px; border: 1px solid var(--line-2); border-radius: 12px; padding: 14px; background: var(--panel-2); display: flex; flex-direction: column; gap: 12px; }
   .brow { display: flex; gap: 12px; align-items: flex-start; }
   .blabel { flex: none; width: 92px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding-top: 7px; }
@@ -379,6 +392,16 @@
           </div>
           <button class="go" id="ask" type="submit">Ask</button>
         </form>
+        <div class="panel-toggles">
+          <button class="builder-toggle" id="extoggle" type="button" aria-expanded="true">
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            Examples
+          </button>
+          <button class="builder-toggle" id="btoggle" type="button" aria-expanded="false">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Build a comparison
+          </button>
+        </div>
         <div class="chips" id="chips">
           <span class="chip" data-q="What was Apple's total revenue in fiscal year 2023?"><b>NUMERIC</b> · Apple revenue FY2023</span>
           <span class="chip" data-q="How much did Microsoft spend on research and development in fiscal year 2024?"><b>NUMERIC</b> · Microsoft R&D FY2024</span>
@@ -387,10 +410,6 @@
           <span class="chip" data-q="How is Microsoft embedding generative AI across its products?"><b>NARRATIVE</b> · Microsoft &amp; generative AI</span>
           <span class="chip" data-q="How do Apple's and Microsoft's supply-chain risks differ?"><b>MULTI-HOP</b> · Apple vs Microsoft risks</span>
         </div>
-        <button class="builder-toggle" id="btoggle" type="button" aria-expanded="false">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          Build a comparison
-        </button>
         <div class="builder" id="builder" hidden>
           <div class="brow"><span class="blabel">Companies</span><div class="bopts" id="bco"></div></div>
           <div class="brow"><span class="blabel">Metrics</span><div class="bopts" id="bmet"></div></div>
@@ -711,6 +730,7 @@ hbox.addEventListener('click', e => { const c = e.target.closest('.hchip'); if (
 async function run(question, autoIngested){
   q.value = question;
   ask.disabled = true;
+  setExamples(false);   // fold the examples away the moment you ask
   out.innerHTML = `<div class="status loading"><span class="spin"></span>Routing &amp; answering…</div>`;
   try {
     const r = await fetch('/query', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ question }) });
@@ -749,6 +769,16 @@ async function autoIngestThenRetry(d, question){
 
 form.addEventListener('submit', e => { e.preventDefault(); if (q.value.trim()) run(q.value.trim()); });
 $('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) run(c.dataset.q); });
+
+/* Examples are onboarding: collapsible, and they fold away once you've asked something —
+   which also keeps the question and its answer together in one screen. */
+const exToggle = $('#extoggle'), chipsBox = $('#chips');
+function setExamples(open){
+  chipsBox.hidden = !open;
+  exToggle.classList.toggle('collapsed', !open);
+  exToggle.setAttribute('aria-expanded', String(open));
+}
+exToggle.addEventListener('click', () => setExamples(chipsBox.hidden));
 document.addEventListener('keydown', e => {
   if (e.key === '/' && document.activeElement !== q && !/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)){ e.preventDefault(); q.focus(); }
 });

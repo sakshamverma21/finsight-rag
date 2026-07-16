@@ -24,6 +24,8 @@ Thumbs.db
 # Local-only — kept on disk, not pushed to the public repo
 DEVLOG.md
 DEPLOYMENT_GUIDE.md
+PITCH.md
+NOTION_DEEPDIVE.md
 docs/RECORDING_GUIDE.md
 smoke_test_llm.py
 validate_extraction.py
