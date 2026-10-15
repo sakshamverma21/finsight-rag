@@ -1,870 +1,123 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FinSight — retrieval over SEC filings</title>
-<style>
-  /* ---------- design tokens (light) ---------- */
-  :root {
-    color-scheme: light;
-    --page: #f4f6f9;
-    --panel: #ffffff;
-    --panel-2: #f7f9fc;
-    --ink: #0c1119;
-    --ink-2: #46505f;
-    --muted: #7a869a;
-    --line: #e7eaef;
-    --line-2: #d8dde6;
-    --accent: #2f5bd7;
-    --accent-ink: #ffffff;
-    --accent-soft: #eaefff;
-    --accent-line: #cdd9fb;
-    --numeric: #1667c8;
-    --numeric-soft: #e8f1fd;
-    --narrative: #0f8a4d;
-    --narrative-soft: #e6f6ee;
-    --mh: #6d3bd1;
-    --mh-soft: #efe9fd;
-    --good: #0f8a4d;
-    --code-bg: #0d1524;
-    --code-ink: #d6deec;
-    --code-kw: #7cc4ff;
-    --code-str: #9ae6a4;
-    --code-num: #f2b06b;
-    --shadow-sm: 0 1px 2px rgba(12,17,25,.05);
-    --shadow-md: 0 1px 2px rgba(12,17,25,.05), 0 10px 30px rgba(12,17,25,.07);
-    --shadow-focus: 0 6px 22px rgba(47,91,215,.14);
-    --radius: 16px;
-    --c-grid: #e5e7ec;
-    --c-axis: #c7cdd8;
-    --c-text: #46505f;
-    --c-muted: #7a869a;
-    --lat-sys: #2f5bd7;
-    --lat-llm: #8a93ff;
-    --lat-thr: #eab308;
-    --series-1: #2a78d6; --series-2: #1baf7a; --series-3: #eda100; --series-4: #008300;
-    --series-5: #4a3aa7; --series-6: #e34948; --series-7: #e87ba4; --series-8: #eb6834;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --page: #0a0c11; --panel: #141922; --panel-2: #10151e;
-      --ink: #eef2f8; --ink-2: #b3bccb; --muted: #7c8698;
-      --line: #232a36; --line-2: #2e3644;
-      --accent: #6d8cff; --accent-ink: #0b0d12; --accent-soft: #1a2338; --accent-line: #2c3a5e;
-      --numeric: #6ab7ff; --numeric-soft: #14273c;
-      --narrative: #55c98a; --narrative-soft: #12291d; --mh: #a48bfa; --mh-soft: #221a3b; --good: #55c98a;
-      --code-bg: #0a0f1a; --code-ink: #d6deec;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
-      --shadow-md: 0 1px 2px rgba(0,0,0,.35), 0 12px 34px rgba(0,0,0,.45);
-      --shadow-focus: 0 6px 22px rgba(0,0,0,.5);
-      --c-grid: #262d3a; --c-axis: #39414f; --c-text: #b3bccb; --c-muted: #7c8698;
-      --lat-sys: #6d8cff; --lat-llm: #9aa3ff; --lat-thr: #eab308;
-      --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500; --series-4: #008300;
-      --series-5: #9085e9; --series-6: #e66767; --series-7: #d55181; --series-8: #d95926;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --page: #0a0c11; --panel: #141922; --panel-2: #10151e;
-    --ink: #eef2f8; --ink-2: #b3bccb; --muted: #7c8698;
-    --line: #232a36; --line-2: #2e3644;
-    --accent: #6d8cff; --accent-ink: #0b0d12; --accent-soft: #1a2338; --accent-line: #2c3a5e;
-    --numeric: #6ab7ff; --numeric-soft: #14273c;
-    --narrative: #55c98a; --narrative-soft: #12291d; --mh: #a48bfa; --mh-soft: #221a3b; --good: #55c98a;
-    --code-bg: #0a0f1a; --code-ink: #d6deec;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
-    --shadow-md: 0 1px 2px rgba(0,0,0,.35), 0 12px 34px rgba(0,0,0,.45);
-    --shadow-focus: 0 6px 22px rgba(0,0,0,.5);
-    --c-grid: #262d3a; --c-axis: #39414f; --c-text: #b3bccb; --c-muted: #7c8698;
-    --lat-sys: #6d8cff; --lat-llm: #9aa3ff; --lat-thr: #eab308;
-    --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500; --series-4: #008300;
-    --series-5: #9085e9; --series-6: #e66767; --series-7: #d55181; --series-8: #d95926;
-  }
-
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0; background: var(--page); color: var(--ink);
-    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-  }
-
-  /* ---------- app shell ---------- */
-  .app { display: grid; grid-template-columns: 300px minmax(0,1fr); grid-template-areas: "side main"; min-height: 100vh; }
-  .sidebar {
-    grid-area: side; position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
-    background: var(--panel); border-right: 1px solid var(--line);
-    padding: 22px 20px 26px; display: flex; flex-direction: column; gap: 24px;
-  }
-  .main { grid-area: main; padding: 22px 34px 90px; }
-  .main-inner { max-width: 860px; margin: 0 auto; position: relative; }
-
-  /* ---------- sidebar ---------- */
-  .s-brand { display: flex; align-items: center; gap: 11px; }
-  .logo { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft);
-    border: 1px solid var(--accent-line); display: grid; place-items: center; flex: none; }
-  .s-brand h1 { margin: 0; font-size: 19px; letter-spacing: -.02em; font-weight: 700; }
-  .s-brand .sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-
-  .s-label { font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 0 0 11px; }
-
-  .hiw { display: flex; gap: 10px; }
-  .hiw + .hiw { margin-top: 13px; }
-  .hiw .d { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex: none; }
-  .hiw.num .d { background: var(--numeric); } .hiw.nar .d { background: var(--narrative); }
-  .hiw .h { display: block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 3px; }
-  .hiw.num .h { color: var(--numeric); } .hiw.nar .h { color: var(--narrative); }
-  .hiw .t { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
-  .hiw .t b { color: var(--ink); font-weight: 600; }
-
-  .corpus-count { font-size: 12.5px; color: var(--ink-2); margin-bottom: 10px; }
-  .corpus-count b { color: var(--ink); font-weight: 700; }
-  .corpus-tks { display: flex; flex-wrap: wrap; gap: 5px; }
-  .tk-chip { font: 11px ui-monospace, monospace; color: var(--ink-2); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; }
-  .addco { margin-top: 13px; display: flex; gap: 6px; }
-  .addco input { flex: 1; min-width: 0; padding: 8px 10px; font-size: 12.5px; color: var(--ink); background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 9px; outline: none; text-transform: uppercase; }
-  .addco input:focus { border-color: var(--accent); }
-  .addco button { padding: 8px 12px; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 9px; cursor: pointer; }
-  .addco button:disabled { opacity: .55; cursor: default; }
-  #addstatus { font-size: 11.5px; margin-top: 8px; line-height: 1.5; }
-  #addstatus .rdy { color: var(--good); font-weight: 600; }
-
-  #history { display: flex; flex-direction: column; gap: 6px; }
-  .hchip { display: block; width: 100%; text-align: left; font-size: 12px; color: var(--ink-2); background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; padding: 7px 10px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .hchip:hover { border-color: var(--accent-line); color: var(--ink); }
-
-  .s-foot { margin-top: auto; padding-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.7; }
-  .s-foot a { color: var(--ink-2); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-  .s-foot a:hover { color: var(--accent); }
-  .s-foot code { font: 11px ui-monospace, monospace; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line); }
-
-  /* ---------- main top + hero ---------- */
-  .maintop { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-  .m-brand { display: none; align-items: center; gap: 9px; }
-  .m-brand .nm { font-weight: 700; font-size: 16px; letter-spacing: -.02em; }
-  .maintop .sp { margin-left: auto; }
-  .iconbtn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink-2); cursor: pointer; display: grid; place-items: center; box-shadow: var(--shadow-sm); transition: border-color .15s, color .15s; }
-  .iconbtn:hover { border-color: var(--line-2); color: var(--ink); }
-
-  .hero { margin: 20px 0 4px; }
-  .hero h2 { margin: 0; font-size: 30px; line-height: 1.2; letter-spacing: -.03em; font-weight: 700; padding-right: 52px; }
-  .hero h2 .g { color: var(--accent); }
-  .hero p { margin: 12px 0 0; color: var(--ink-2); font-size: 15px; max-width: 64ch; }
-
-  /* Desktop: float the theme toggle out of the flow. Otherwise its 38px row pushes the
-     hero down ~58px, so the main column starts well below the sidebar's brand text and
-     the top-left reads as dead space. Floating it lets the two columns start level. */
-  @media (min-width: 901px) {
-    .maintop { position: absolute; top: 0; right: 0; margin-bottom: 0; }
-    .hero { margin-top: 0; }
-  }
-
-  /* ---------- the ask panel (focal) ---------- */
-  .askpanel { margin: 22px 0 0; background: var(--panel); border: 1px solid var(--line-2); border-radius: 18px; padding: 20px; box-shadow: var(--shadow-md); }
-  .askpanel .lead { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 11px; }
-  form.ask { display: flex; gap: 10px; }
-  .qbox { flex: 1; position: relative; display: flex; align-items: center; }
-  .qbox svg { position: absolute; left: 16px; color: var(--muted); pointer-events: none; }
-  input#q {
-    width: 100%; padding: 15px 16px 15px 46px; font-size: 16px; color: var(--ink);
-    background: var(--panel-2); border: 1.5px solid var(--line-2); border-radius: 12px; outline: none;
-    transition: border-color .15s, box-shadow .15s, background .15s;
-  }
-  input#q::placeholder { color: var(--muted); }
-  input#q:focus { border-color: var(--accent); background: var(--panel); box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow-focus); }
-  button.go {
-    padding: 0 26px; font-size: 15px; font-weight: 600; color: var(--accent-ink); cursor: pointer;
-    background: var(--accent); border: 0; border-radius: 12px; box-shadow: var(--shadow-sm);
-    transition: filter .15s, opacity .15s;
-  }
-  button.go:hover { filter: brightness(1.06); }
-  button.go:disabled { opacity: .5; cursor: default; }
-
-  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
-  .chip { font-size: 12.5px; color: var(--ink-2); background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; transition: border-color .15s, color .15s, background .15s; }
-  .chip:hover { border-color: var(--accent-line); color: var(--ink); background: var(--accent-soft); }
-  .chip b { color: var(--accent); font-weight: 700; font-size: 10.5px; letter-spacing: .04em; }
-
-  /* ---------- panel toggles (examples · comparison builder) ---------- */
-  .panel-toggles { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 14px; }
-  .builder-toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--accent); background: transparent; border: 0; cursor: pointer; padding: 4px 0; }
-  .builder-toggle svg { transition: transform .2s; }
-  .builder-toggle.open svg { transform: rotate(45deg); }
-  .builder-toggle.collapsed .chev { transform: rotate(-90deg); }
-  /* These MUST beat the `display:flex` rules below: an author display rule overrides
-     the UA's `[hidden] { display: none }`, so `hidden` alone would silently do nothing. */
-  .chips[hidden], .builder[hidden] { display: none; }
-  .builder { margin-top: 12px; border: 1px solid var(--line-2); border-radius: 12px; padding: 14px; background: var(--panel-2); display: flex; flex-direction: column; gap: 12px; }
-  .brow { display: flex; gap: 12px; align-items: flex-start; }
-  .blabel { flex: none; width: 92px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding-top: 7px; }
-  .bopts { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tog { font-size: 12.5px; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line-2); border-radius: 999px; padding: 6px 12px; cursor: pointer; user-select: none; font-variant-numeric: tabular-nums; transition: background .12s, border-color .12s, color .12s; }
-  .tog:hover { border-color: var(--accent-line); color: var(--ink); }
-  .tog.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
-  .bactions { display: flex; align-items: center; gap: 12px; }
-  .bgo { padding: 10px 22px; font-size: 14px; }
-  .bhint { font-size: 12px; color: var(--muted); }
-  @media (max-width: 560px) { .brow { flex-direction: column; gap: 6px; } .blabel { padding-top: 0; } }
-
-  /* ---------- result card ---------- */
-  .card { margin-top: 22px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; }
-  .card .head { display: flex; align-items: center; gap: 11px; padding: 14px 18px; }
-  .badge { font-size: 11px; font-weight: 700; letter-spacing: .05em; padding: 4px 9px; border-radius: 7px; }
-  .badge.NUMERIC { color: var(--numeric); background: var(--numeric-soft); }
-  .badge.NARRATIVE { color: var(--narrative); background: var(--narrative-soft); }
-  .badge.MULTI_HOP { color: var(--mh); background: var(--mh-soft); }
-  .head .path-desc { font-size: 12.5px; color: var(--muted); }
-  .head .path-desc b { color: var(--ink-2); font-weight: 600; }
-
-  .timing { display: flex; align-items: center; gap: 11px; padding: 0 18px 13px; border-bottom: 1px solid var(--line); }
-  .lat { display: flex; height: 6px; width: 128px; border-radius: 999px; overflow: hidden; background: var(--line); flex: none; }
-  .lat span { display: block; height: 100%; }
-  .lat .s-sys { background: var(--lat-sys); } .lat .s-llm { background: var(--lat-llm); } .lat .s-thr { background: var(--lat-thr); }
-  .timing .txt { font-size: 12.5px; color: var(--muted); }
-  .timing .txt b { color: var(--ink-2); font-weight: 600; font-variant-numeric: tabular-nums; }
-  .timing .ok { color: var(--good); font-weight: 600; }
-  .timing .cached { color: var(--accent); font-weight: 600; }
-
-  .body { padding: 18px; }
-  .answer { font-size: 15.5px; line-height: 1.62; }
-  .answer.narrative { white-space: pre-wrap; }
-  cite-mark, .cite { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; }
-
-  .stat { border: 1px solid var(--line); background: var(--panel-2); border-radius: 13px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px 20px; }
-  .stat-main { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; }
-  .stat .val { font-size: 40px; font-weight: 700; letter-spacing: -.03em; line-height: 1; }
-  .stat .meta { display: flex; flex-direction: column; gap: 2px; }
-  .stat .metric { font-size: 14px; font-weight: 600; color: var(--ink-2); }
-  .stat .who { font-size: 12.5px; color: var(--muted); }
-  .stat .who .t { font-weight: 700; color: var(--ink-2); }
-  .trend { display: flex; align-items: center; gap: 12px; }
-  .trend svg { display: block; }
-  .trend-meta { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
-  .trend-meta .delta { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; gap: 3px; }
-  .trend-meta .delta.up { color: var(--good); } .trend-meta .delta.down { color: #d84a4a; } .trend-meta .delta.flat { color: var(--muted); }
-  .trend-meta .rng { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  @media (max-width: 460px) { .trend { width: 100%; justify-content: flex-start; } }
-
-  .section-label { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin: 22px 0 9px; text-transform: uppercase; }
-  .copy { margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 7px; padding: 3px 9px; cursor: pointer; }
-  .copy:hover { color: var(--ink); border-color: var(--line-2); }
-  .copy.done { color: var(--good); border-color: var(--good); }
-
-  pre.sql { margin: 0; padding: 14px 16px; background: var(--code-bg); color: var(--code-ink); border-radius: 11px;
-    font: 13px/1.55 "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace; overflow-x: auto; white-space: pre; }
-  .sql .kw { color: var(--code-kw); } .sql .str { color: var(--code-str); } .sql .num { color: var(--code-num); }
-
-  .chart { background: var(--panel-2); border: 1px solid var(--line); border-radius: 13px; padding: 14px 14px 10px; }
-  .chart + .chart { margin-top: 12px; }
-  .chart .ctitle { font-size: 14px; font-weight: 600; color: var(--ink); }
-  .chart .csub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-  .chart svg { display: block; width: 100%; height: auto; margin-top: 6px; overflow: visible; }
-  .chart svg text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
-  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-  .note { font-size: 12px; color: var(--muted); margin-top: 9px; }
-
-  .tblwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.dt th { text-align: left; color: var(--muted); font-weight: 600; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; padding: 7px 10px; border-bottom: 1px solid var(--line-2); }
-  table.dt td { padding: 8px 10px; border-bottom: 1px solid var(--line); }
-  table.dt tr:last-child td { border-bottom: 0; }
-  table.dt .r { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink); }
-  table.dt .tk { font-weight: 700; }
-
-  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 6px; }
-  ol.steps li { position: relative; display: flex; align-items: baseline; gap: 10px; padding: 9px 12px 9px 36px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
-  ol.steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 11px; top: 9px; width: 17px; height: 17px; border-radius: 50%; background: var(--mh-soft); color: var(--mh); font-size: 10.5px; font-weight: 700; display: grid; place-items: center; }
-  ol.steps li.recovery { border-color: var(--mh); background: var(--mh-soft); }
-  ol.steps li.recovery::before { content: "↻"; }
-  ol.steps .sq { flex: 1; color: var(--ink-2); }
-  ol.steps .sc { flex: none; color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-
-  .sources { display: flex; flex-direction: column; gap: 5px; }
-  .src { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; font-size: 13px; }
-  .src.cited { border-color: var(--accent-line); background: var(--accent-soft); }
-  .src .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); flex: none; }
-  .src.cited .dot { background: var(--accent); }
-  .src .tk { font-weight: 700; }
-  .src .sec { color: var(--muted); }
-  .src .id { margin-left: auto; color: var(--muted); font: 11.5px ui-monospace, monospace; }
-
-  .status { margin-top: 22px; padding: 15px 17px; border-radius: 12px; font-size: 14px; display: flex; align-items: center; gap: 10px; }
-  .status.loading { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line); }
-  .status.error { background: var(--numeric-soft); color: var(--numeric); border: 1px solid var(--numeric); }
-  .spin { width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: s .7s linear infinite; flex: none; }
-  @keyframes s { to { transform: rotate(360deg); } }
-
-  @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; grid-template-areas: "main" "side"; }
-    .sidebar { position: static; height: auto; overflow: visible; border-right: 0; border-top: 1px solid var(--line); }
-    .s-brand { display: none; }
-    .s-foot { margin-top: 8px; }
-    .main { padding: 16px 18px 40px; }
-    .m-brand { display: flex; }
-  }
-  @media (max-width: 560px) {
-    .hero h2 { font-size: 24px; }
-    .stat .val { font-size: 32px; }
-    form.ask { flex-direction: column; }
-    button.go { padding: 13px; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8f6">
+  <meta name="description" content="Research SEC annual filings with reported financial figures and inspectable source evidence.">
+  <title>FinSight — research company filings</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/app.js"></script>
 </head>
 <body>
-<div class="app">
-  <!-- ===================== SIDEBAR ===================== -->
-  <aside class="sidebar">
-    <div class="s-brand">
-      <span class="logo" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect x="2" y="11" width="3.4" height="7" rx="1" fill="var(--accent)"/>
-          <rect x="8.3" y="6.5" width="3.4" height="11.5" rx="1" fill="var(--accent)" opacity=".72"/>
-          <rect x="14.6" y="2" width="3.4" height="16" rx="1" fill="var(--accent)" opacity=".45"/>
-        </svg>
-      </span>
-      <div>
-        <h1>FinSight</h1>
-        <div class="sub">Retrieval over SEC 10-K filings</div>
-      </div>
-    </div>
-
-    <div class="s-sec">
-      <p class="s-label">How it works</p>
-      <div class="hiw num">
-        <span class="d"></span>
-        <div><span class="h">Numeric → text-to-SQL</span><span class="t">Routed to a <b>DuckDB store of XBRL facts</b> — the reported figure, the SQL that produced it, plus a table &amp; chart.</span></div>
-      </div>
-      <div class="hiw nar">
-        <span class="d"></span>
-        <div><span class="h">Narrative → hybrid retrieval</span><span class="t">Dense + BM25 → <b>reranked</b> → grounded generation, every claim traced to its source chunk.</span></div>
-      </div>
-    </div>
-
-    <div class="s-sec">
-      <p class="s-label">Corpus</p>
-      <div class="corpus-count" id="corpus"><b id="cocount">10</b> companies indexed</div>
-      <div class="corpus-tks" id="corpustks"></div>
-      <div class="addco">
-        <input id="tk" type="text" placeholder="ticker" maxlength="6" autocomplete="off" aria-label="Add a company by ticker">
-        <button id="addbtn" type="button">+ Add</button>
-      </div>
-      <div id="addstatus"></div>
-    </div>
-
-    <div class="s-sec" id="recent-sec" hidden>
-      <p class="s-label">Recent</p>
-      <div id="history"></div>
-    </div>
-
-    <div class="s-foot">
-      <a href="https://github.com/sakshamverma21/finsight-rag" target="_blank" rel="noopener">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        Source on GitHub
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="FinSight home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none"><path d="M4 21h20M6.5 17.5l5-5 3.5 2.8 6-7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="21" cy="8.3" r="2" fill="currentColor"/></svg>
+        </span>
+        <span>FinSight</span>
       </a>
-      <div style="margin-top:8px">API: <code>POST /query</code></div>
+      <div class="header-actions">
+        <button class="header-link" id="coverage-open" type="button" aria-haspopup="dialog">
+          <span class="coverage-dot" aria-hidden="true"></span>
+          <span><span id="coverage-count">—</span> companies</span>
+        </button>
+        <button class="icon-button" id="theme" type="button" aria-label="Switch to dark theme" title="Switch theme"></button>
+      </div>
     </div>
-  </aside>
+  </header>
 
-  <!-- ===================== MAIN ===================== -->
-  <main class="main">
-    <div class="main-inner">
-      <div class="maintop">
-        <span class="m-brand"><span class="logo" style="width:28px;height:28px;border-radius:8px"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><rect x="2" y="11" width="3.4" height="7" rx="1" fill="var(--accent)"/><rect x="8.3" y="6.5" width="3.4" height="11.5" rx="1" fill="var(--accent)" opacity=".72"/><rect x="14.6" y="2" width="3.4" height="16" rx="1" fill="var(--accent)" opacity=".45"/></svg></span><span class="nm">FinSight</span></span>
-        <span class="sp"></span>
-        <button class="iconbtn" id="theme" type="button" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
+  <main id="main" class="page">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow"><span class="eyebrow-line"></span> SEC FILING RESEARCH</p>
+      <h1 id="page-title">Understand the numbers.<br><span>See the evidence.</span></h1>
+      <p class="intro-copy">Ask about a company's annual filing, compare reported figures, and trace an answer back to the source text.</p>
+    </section>
+
+    <section class="workspace" aria-label="Research workspace">
+      <div class="workspace-tabs" role="tablist" aria-label="Research mode">
+        <button class="workspace-tab active" id="ask-tab" role="tab" type="button" aria-selected="true" aria-controls="ask-panel">Ask a question</button>
+        <button class="workspace-tab" id="compare-tab" role="tab" type="button" aria-selected="false" aria-controls="compare-panel" tabindex="-1">Compare companies</button>
       </div>
 
-      <section class="hero">
-        <h2>Ask a financial question.<br>Get an <span class="g">exact, cited</span> answer.</h2>
-        <p>Numeric questions are answered from structured XBRL data via generated SQL — exact to the dollar, not a fuzzy vector match. Narrative questions run through hybrid retrieval + cross-encoder reranking, every claim traced to its source.</p>
-      </section>
-
-      <div class="askpanel">
-        <div class="lead">Ask FinSight</div>
-        <form class="ask" id="form">
-          <div class="qbox">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input id="q" type="text" autocomplete="off" placeholder="e.g. What was NVIDIA's R&D expense in fiscal year 2025?">
+      <div class="workspace-panel" id="ask-panel" role="tabpanel" aria-labelledby="ask-tab">
+        <form id="ask-form" class="ask-form">
+          <label for="question" class="field-label">What would you like to know?</label>
+          <div class="question-field">
+            <textarea id="question" name="question" rows="2" minlength="3" maxlength="500" placeholder="e.g. What were Apple's main supply chain risks in its latest 10-K?" required></textarea>
+            <button class="primary-button ask-button" id="ask-button" type="submit">Get answer <span aria-hidden="true">↗</span></button>
           </div>
-          <button class="go" id="ask" type="submit">Ask</button>
+          <p class="field-help">Name a company and, for financial figures, a fiscal year. Enter to ask · Shift+Enter for a new line.</p>
         </form>
-        <div class="panel-toggles">
-          <button class="builder-toggle" id="extoggle" type="button" aria-expanded="true">
-            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            Examples
-          </button>
-          <button class="builder-toggle" id="btoggle" type="button" aria-expanded="false">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            Build a comparison
-          </button>
-        </div>
-        <div class="chips" id="chips">
-          <span class="chip" data-q="What was Apple's total revenue in fiscal year 2023?"><b>NUMERIC</b> · Apple revenue FY2023</span>
-          <span class="chip" data-q="How much did Microsoft spend on research and development in fiscal year 2024?"><b>NUMERIC</b> · Microsoft R&D FY2024</span>
-          <span class="chip" data-q="Compare Apple, Microsoft, Nvidia and Google total revenue for fiscal years 2023 and 2024"><b>COMPARE</b> · AAPL vs MSFT vs NVDA vs GOOGL</span>
-          <span class="chip" data-q="What supply chain risks does Apple disclose?"><b>NARRATIVE</b> · Apple supply-chain risks</span>
-          <span class="chip" data-q="How is Microsoft embedding generative AI across its products?"><b>NARRATIVE</b> · Microsoft &amp; generative AI</span>
-          <span class="chip" data-q="How do Apple's and Microsoft's supply-chain risks differ?"><b>MULTI-HOP</b> · Apple vs Microsoft risks</span>
-        </div>
-        <div class="builder" id="builder" hidden>
-          <div class="brow"><span class="blabel">Companies</span><div class="bopts" id="bco"></div></div>
-          <div class="brow"><span class="blabel">Metrics</span><div class="bopts" id="bmet"></div></div>
-          <div class="brow"><span class="blabel">Fiscal years</span><div class="bopts" id="byr"></div></div>
-          <div class="bactions"><button class="go bgo" id="bgo" type="button" disabled>Compare</button><span class="bhint" id="bhint"></span></div>
+
+        <div class="examples" aria-labelledby="examples-title">
+          <div class="section-heading"><h2 id="examples-title">Try a question</h2><span>Explore the three ways FinSight can help</span></div>
+          <div class="example-grid">
+            <button class="example-card" type="button" data-question="What was Apple's total revenue in fiscal year 2023?">
+              <span class="example-type">Reported figure</span><span class="example-text">How much revenue did Apple report for FY2023?</span><span class="example-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button class="example-card" type="button" data-question="What supply chain risks does Apple disclose?">
+              <span class="example-type">Filing insight</span><span class="example-text">What supply chain risks does Apple disclose?</span><span class="example-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button class="example-card" type="button" data-question="How do Apple's and Microsoft's supply-chain risks differ?">
+              <span class="example-type">Across companies</span><span class="example-text">How do Apple's and Microsoft's supply chain risks differ?</span><span class="example-arrow" aria-hidden="true">↗</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div id="out"></div>
-    </div>
+      <div class="workspace-panel" id="compare-panel" role="tabpanel" aria-labelledby="compare-tab" hidden>
+        <div class="compare-intro">
+          <h2>Build a financial comparison</h2>
+          <p>Choose companies, a metric, and fiscal years. Comparisons use reported figures from structured filing data.</p>
+        </div>
+        <div class="selection-group" aria-labelledby="companies-label">
+          <div class="selection-heading"><h3 id="companies-label">Companies</h3><span>Up to four</span></div>
+          <div class="option-grid" id="company-options"></div>
+        </div>
+        <div class="selection-group" aria-labelledby="metrics-label">
+          <div class="selection-heading"><h3 id="metrics-label">Metrics</h3><span>Up to two</span></div>
+          <div class="option-grid" id="metric-options"></div>
+        </div>
+        <div class="selection-group" aria-labelledby="years-label">
+          <div class="selection-heading"><h3 id="years-label">Fiscal years</h3><span>Available periods are marked below</span></div>
+          <div class="option-grid" id="year-options"></div>
+          <p class="field-help" id="year-help">A company may not report every selected metric in every year.</p>
+        </div>
+        <div class="compare-action">
+          <button class="primary-button" id="compare-button" type="button" disabled>Show comparison <span aria-hidden="true">↗</span></button>
+          <p id="compare-preview" aria-live="polite">Choose at least one company, metric, and fiscal year.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="result-region" class="result-region" aria-label="Research result"></section>
+
+    <section class="recent" id="recent-section" aria-labelledby="recent-title" hidden>
+      <div class="section-heading"><h2 id="recent-title">Recent questions</h2><span>Saved for this browser session</span></div>
+      <div class="recent-list" id="recent-list"></div>
+    </section>
   </main>
-</div>
 
-<script>
-const $ = s => document.querySelector(s);
-const out = $('#out'), form = $('#form'), q = $('#q'), ask = $('#ask');
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>FinSight <span aria-hidden="true">·</span> Research from public SEC filings</span>
+      <a href="https://github.com/sakshamverma21/finsight-rag" target="_blank" rel="noopener noreferrer">View source <span aria-hidden="true">↗</span></a>
+    </div>
+  </footer>
 
-const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-const citeUp = s => esc(s).replace(/\[(\d+)\]/g, '<span class="cite">[$1]</span>');
-function sqlHi(s){
-  return esc(s)
-    .replace(/\b(SELECT|FROM|WHERE|AND|OR|IS|NULL|ORDER BY|GROUP BY|LIMIT|AS|NOT|IN|DESC|ASC)\b/g, '<span class="kw">$1</span>')
-    .replace(/'([^']*)'/g, '<span class="str">\'$1\'</span>')
-    .replace(/\b(\d{4})\b/g, '<span class="num">$1</span>');
-}
-
-/* ---------- theme toggle ---------- */
-const SUN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
-const MOON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.2 6.2 0 0 0 10.5 10.5Z"/></svg>';
-const themeBtn = $('#theme');
-function isDark(){
-  const t = document.documentElement.getAttribute('data-theme');
-  if (t) return t === 'dark';
-  return matchMedia('(prefers-color-scheme: dark)').matches;
-}
-function paintThemeIcon(){ themeBtn.innerHTML = isDark() ? SUN : MOON; }
-(function initTheme(){
-  const saved = localStorage.getItem('finsight-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-  paintThemeIcon();
-})();
-themeBtn.addEventListener('click', () => {
-  const next = isDark() ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('finsight-theme', next);
-  paintThemeIcon();
-});
-
-/* ---------- number formatting ---------- */
-function fmtFull(v, label){
-  if (typeof v !== 'number') return esc(String(v ?? ''));
-  const per = /per share/.test((label||'').toLowerCase());
-  if (per || Math.abs(v) < 1000) return '$' + v.toFixed(2);
-  if (Math.abs(v) >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
-  if (Math.abs(v) >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
-  return '$' + Math.round(v).toLocaleString();
-}
-function fmtCompact(v, label){
-  if (typeof v !== 'number') return String(v ?? '');
-  const per = /per share/.test((label||'').toLowerCase());
-  const a = Math.abs(v);
-  if (per || a < 1000) return '$' + v.toFixed(2);
-  if (a >= 1e9) return '$' + (v/1e9).toFixed(a >= 1e11 ? 0 : 1) + 'B';
-  if (a >= 1e6) return '$' + (v/1e6).toFixed(a >= 1e8 ? 0 : 1) + 'M';
-  if (a >= 1e3) return '$' + (v/1e3).toFixed(0) + 'K';
-  return '$' + Math.round(v);
-}
-function unitOf(max){
-  if (max >= 1e9) return {d:1e9, s:'billions'};
-  if (max >= 1e6) return {d:1e6, s:'millions'};
-  if (max >= 1e3) return {d:1e3, s:'thousands'};
-  return {d:1, s:''};
-}
-function niceCeil(x){
-  if (x <= 0) return 1;
-  const p = Math.pow(10, Math.floor(Math.log10(x))), n = x / p;
-  const m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
-  return m * p;
-}
-function niceStep(x){
-  if (x <= 0) return 1;
-  const p = Math.pow(10, Math.floor(Math.log10(x))), n = x / p;
-  const m = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
-  return m * p;
-}
-function metricOf(label){
-  const l = (label||'').toLowerCase();
-  if (/net sales|revenue|revenues/.test(l)) return 'Revenue';
-  if (/gross (profit|margin)/.test(l)) return 'Gross profit';
-  if (/net income|net loss/.test(l)) return 'Net income';
-  if (/operating income|income from operations/.test(l)) return 'Operating income';
-  if (/research and development/.test(l)) return 'R&D expense';
-  if (/per share|earnings per share/.test(l)) return 'Diluted EPS';
-  return label || 'Value';
-}
-
-/* ---------- grouped column chart ---------- */
-function seriesColor(i){ return 'var(--series-' + ((i % 8) + 1) + ')'; }
-function barPath(x, yEnd, yBase, w, r){
-  r = Math.max(0, Math.min(r, w/2, Math.abs(yBase - yEnd)));
-  if (yEnd <= yBase)
-    return `M${x},${yBase} L${x},${yEnd+r} Q${x},${yEnd} ${x+r},${yEnd} L${x+w-r},${yEnd} Q${x+w},${yEnd} ${x+w},${yEnd+r} L${x+w},${yBase} Z`;
-  return `M${x},${yBase} L${x},${yEnd-r} Q${x},${yEnd} ${x+r},${yEnd} L${x+w-r},${yEnd} Q${x+w},${yEnd} ${x+w},${yEnd-r} L${x+w},${yBase} Z`;
-}
-function chartSVG(rows, metric){
-  const tickers = [...new Set(rows.map(r => r.ticker))];
-  const years = [...new Set(rows.map(r => r.period_fy).filter(y => y != null))].sort((a,b) => a-b);
-  const byYear = years.length >= 2;
-  const xCats = byYear ? years : tickers;
-  const series = byYear ? tickers : [null];
-  const valOf = byYear
-    ? (x,s) => { const r = rows.find(r => r.period_fy === x && r.ticker === s); return r ? r.value : null; }
-    : (x) => { const r = rows.find(r => r.ticker === x); return r ? r.value : null; };
-
-  const label0 = rows[0].label;
-  const isPer = /per share|eps/i.test(metric);
-  const vals = rows.map(r => r.value).filter(v => typeof v === 'number');
-  const dmax = Math.max(0, ...vals), dmin = Math.min(0, ...vals);
-  const bottom = dmin < 0 ? -niceCeil(-dmin) : 0;
-  const step = niceStep((dmax - bottom) / 4);
-  const top = bottom + step * 4;
-  const range = (top - bottom) || 1;
-  const u = isPer ? {d:1, s:''} : unitOf(top);
-  const yTitle = isPer ? 'USD per share' : ('USD, ' + (u.s || 'units'));
-
-  const W=680, H=272, mL=60, mR=14, mT=26, mB=44;
-  const plotW = W-mL-mR, plotH = H-mT-mB;
-  const y = v => mT + plotH * (top - v) / range;
-  const yBase = y(0);
-
-  const n = xCats.length, s = series.length;
-  const groupW = plotW / n;
-  const gpad = Math.min(groupW * 0.16, 26);
-  const gap = 3;
-  const barW = Math.max(6, Math.min(34, (groupW - 2*gpad - (s-1)*gap) / s));
-  const innerW = s*barW + (s-1)*gap;
-  const startOff = (groupW - innerW) / 2;
-  const showVals = barW >= 20 && (byYear ? s <= 4 : true);
-
-  const AX = 'style="fill:var(--c-muted)"', GRID = 'style="stroke:var(--c-grid)"', AXIS = 'style="stroke:var(--c-axis)"';
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(metric)} comparison">`;
-  for (let i=0;i<=4;i++){
-    const v = bottom + range*i/4, yy = y(v);
-    svg += `<line x1="${mL}" y1="${yy.toFixed(1)}" x2="${W-mR}" y2="${yy.toFixed(1)}" ${GRID} stroke-width="1"/>`;
-    const tv = v / u.d, tl = tv === 0 ? '0' : (Math.abs(tv) >= 10 ? Math.round(tv).toLocaleString() : tv.toFixed(1));
-    svg += `<text x="${mL-8}" y="${(yy+3.5).toFixed(1)}" text-anchor="end" font-size="11" font-variant-numeric="tabular-nums" ${AX}>${tl}</text>`;
-  }
-  svg += `<line x1="${mL}" y1="${yBase.toFixed(1)}" x2="${W-mR}" y2="${yBase.toFixed(1)}" ${AXIS} stroke-width="1.25"/>`;
-  svg += `<text transform="translate(15 ${mT+plotH/2}) rotate(-90)" text-anchor="middle" font-size="11" ${AX}>${esc(yTitle)}</text>`;
-
-  xCats.forEach((x, gi) => {
-    const gx = mL + gi*groupW + startOff;
-    series.forEach((se, si) => {
-      const v = valOf(x, se); if (v == null) return;
-      const bx = gx + si*(barW+gap), yEnd = y(v);
-      const ci = byYear ? si : gi;
-      svg += `<path d="${barPath(bx, yEnd, yBase, barW, 4)}" fill="${seriesColor(ci)}">`
-           + `<title>${esc(String(se ?? x))} ${byYear ? esc(String(x)) : ''} — ${esc(metric)}: ${fmtFull(v, label0)}</title></path>`;
-      if (showVals){
-        const ly = v >= 0 ? yEnd - 6 : yEnd + 13;
-        svg += `<text x="${(bx+barW/2).toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-size="10" font-weight="600" ${AX}>${esc(fmtCompact(v, label0))}</text>`;
-      }
-    });
-    svg += `<text x="${(mL+gi*groupW+groupW/2).toFixed(1)}" y="${H-mB+18}" text-anchor="middle" font-size="11.5" style="fill:var(--c-text)">${esc(String(x))}</text>`;
-  });
-  svg += `<text x="${(mL+plotW/2).toFixed(1)}" y="${H-4}" text-anchor="middle" font-size="11" ${AX}>${byYear ? 'Fiscal year' : 'Company'}</text>`;
-  svg += `</svg>`;
-
-  const legend = byYear
-    ? `<div class="legend">${tickers.map((t,i) => `<span><i style="background:${seriesColor(i)}"></i>${esc(t)}</span>`).join('')}</div>`
-    : '';
-  const sub = 'Values in ' + (isPer ? 'USD per share' : ('USD ' + (u.s || '')));
-  return `<div class="chart"><div class="ctitle">${esc(metric)}</div><div class="csub">${esc(sub)}</div>${svg}${legend}</div>`;
-}
-
-function dataTable(rows){
-  let t = `<div class="section-label">Data</div><div class="tblwrap"><table class="dt"><thead><tr><th>Company</th><th>FY</th><th>Metric</th><th class="r">Value</th></tr></thead><tbody>`;
-  for (const r of rows)
-    t += `<tr><td class="tk">${esc(r.ticker||'')}</td><td>${esc(String(r.period_fy??''))}</td><td>${esc(r.label||'')}</td><td class="r">${fmtFull(r.value, r.label)}</td></tr>`;
-  return t + `</tbody></table></div>`;
-}
-
-function renderViz(data){
-  const rows = data.filter(r => typeof r.value === 'number');
-  if (rows.length < 2) return '';
-  const groups = {};
-  for (const r of rows){ (groups[metricOf(r.label)] ||= []).push(r); }
-  let html = '';
-  for (const [metric, g] of Object.entries(groups))
-    if (g.length >= 2) html += chartSVG(g, metric);
-  const tks = new Set(rows.map(r => r.ticker)).size;
-  const yrs = new Set(rows.map(r => r.period_fy)).size;
-  const mets = Object.keys(groups).length;
-  if (rows.length < tks * yrs * mets)
-    html += `<div class="note">Some cells are unavailable — a company may not report that metric, or that fiscal year isn't in our data yet.</div>`;
-  return html + dataTable(rows);
-}
-
-// A deterministic multi-year sparkline (no LLM) — context for a single figure.
-function sparkline(trend, answeredFy, label){
-  const pts = (trend || []).filter(t => typeof t.value === 'number');
-  if (pts.length < 2) return '';
-  const vals = pts.map(p => p.value);
-  const lo = Math.min(...vals), hi = Math.max(...vals), span = (hi - lo) || 1;
-  const W = 168, H = 50, padX = 9, padY = 8;
-  const X = i => padX + i * (W - 2*padX) / (pts.length - 1);
-  const Y = v => padY + (H - 2*padY) * (1 - (v - lo) / span);
-  const linePath = pts.map((p,i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(p.value).toFixed(1)}`).join(' ');
-  const areaPath = `M${X(0).toFixed(1)},${(H-padY).toFixed(1)} `
-    + pts.map((p,i) => `L${X(i).toFixed(1)},${Y(p.value).toFixed(1)}`).join(' ')
-    + ` L${X(pts.length-1).toFixed(1)},${(H-padY).toFixed(1)} Z`;
-  const col = 'var(--series-1)';
-  const ai = pts.findIndex(p => p.period_fy === answeredFy);
-  const ei = ai >= 0 ? ai : pts.length - 1;   // emphasise the year you asked about
-  const dot = `<circle cx="${X(ei).toFixed(1)}" cy="${Y(pts[ei].value).toFixed(1)}" r="3.4" fill="${col}"/>`;
-  const first = pts[0], last = pts[pts.length-1];
-  const dpct = first.value ? (last.value - first.value) / Math.abs(first.value) * 100 : 0;
-  const flat = Math.abs(dpct) < 0.05, cls = flat ? 'flat' : (dpct >= 0 ? 'up' : 'down');
-  const arrow = flat ? '' : (dpct >= 0 ? '▲' : '▼');
-  const svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(metricOf(label))} trend">`
-    + `<path d="${areaPath}" fill="${col}" opacity="0.10"/>`
-    + `<path d="${linePath}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
-    + dot + `</svg>`;
-  return `<div class="trend"><div title="${esc(metricOf(label))}, FY${first.period_fy}–FY${last.period_fy}">${svg}</div>`
-    + `<div class="trend-meta"><span class="delta ${cls}">${arrow} ${Math.abs(dpct).toFixed(1)}%</span>`
-    + `<span class="rng">FY${first.period_fy}→FY${last.period_fy}</span></div></div>`;
-}
-
-function statTile(r, trend){
-  return `<div class="stat"><div class="stat-main"><span class="val">${esc(fmtCompact(r.value, r.label))}</span>`
-    + `<span class="meta"><span class="metric">${esc(metricOf(r.label))}</span>`
-    + `<span class="who"><span class="t">${esc(r.ticker||'')}</span> · FY${esc(String(r.period_fy??''))} · reported ${esc(fmtFull(r.value, r.label))}</span></span></div>`
-    + sparkline(trend, r.period_fy, r.label) + `</div>`;
-}
-
-/* ---------- copy button wiring ---------- */
-out.addEventListener('click', e => {
-  const b = e.target.closest('.copy'); if (!b) return;
-  const text = decodeURIComponent(b.dataset.copy || '');
-  navigator.clipboard?.writeText(text).then(() => {
-    const old = b.textContent; b.textContent = 'Copied'; b.classList.add('done');
-    setTimeout(() => { b.textContent = old; b.classList.remove('done'); }, 1400);
-  });
-});
-const copyBtn = (text, lbl) => `<button class="copy" data-copy="${encodeURIComponent(text)}">${lbl}</button>`;
-
-/* ---------- timing strip ---------- */
-function timingHTML(d){
-  if (d.cached)
-    return `<div class="timing"><span class="lat"><span class="s-sys" style="width:100%"></span></span>`
-      + `<span class="txt"><span class="cached">⚡ cached</span> · <b>${Math.round(d.latency_ms)}ms</b> · no LLM call</span></div>`;
-  const sys = d.system_ms||0, llm = d.llm_ms||0, thr = d.throttle_ms||0, tot = Math.max(sys+llm+thr, 1);
-  const seg = (w,cls,t) => w > 0 ? `<span class="${cls}" style="width:${(w/tot*100).toFixed(1)}%" title="${t}"></span>` : '';
-  const bar = `<span class="lat">${seg(sys,'s-sys','system '+Math.round(sys)+'ms')}${seg(llm,'s-llm','LLM '+Math.round(llm)+'ms')}${seg(thr,'s-thr','throttle '+Math.round(thr)+'ms')}</span>`;
-  let txt = `<b>${Math.round(sys)}ms</b> system · <b>${(llm/1000).toFixed(1)}s</b> LLM`;
-  if (thr > 200) txt += ` · +${(thr/1000).toFixed(1)}s throttle`;
-  if ((d.route === 'NARRATIVE' || d.route === 'MULTI_HOP') && d.citations_valid !== null && d.citations_valid !== undefined)
-    txt += d.citations_valid ? ' · <span class="ok">✓ citations verified</span>' : ' · citations flagged';
-  return `<div class="timing">${bar}<span class="txt">${txt}</span></div>`;
-}
-
-function render(d){
-  const DESC = { NUMERIC: 'text-to-SQL over XBRL facts', NARRATIVE: 'hybrid retrieval + cross-encoder rerank', MULTI_HOP: 'agentic multi-hop retrieval' };
-  const desc = DESC[d.route] || DESC.NARRATIVE;
-  const isCited = d.route === 'NARRATIVE' || d.route === 'MULTI_HOP';
-  let inner = `<div class="head"><span class="badge ${d.route}">${d.route.replace('_','-')}</span><span class="path-desc">${desc}</span></div>`;
-  inner += timingHTML(d);
-  inner += `<div class="body">`;
-
-  const rows = (d.data || []).filter(r => typeof r.value === 'number');
-  if (d.route === 'NUMERIC' && rows.length >= 2){
-    inner += renderViz(d.data);
-  } else if (d.route === 'NUMERIC' && rows.length === 1){
-    inner += statTile(rows[0], d.trend);
-  } else {
-    const cls = isCited ? 'answer narrative' : 'answer';
-    const body = isCited ? citeUp(d.answer) : esc((d.answer||'').trim()).replace(/\n/g,'<br>');
-    inner += `<div class="${cls}">${body}</div>`;
-  }
-  if (d.route === 'NUMERIC' && d.sql){
-    inner += `<div class="section-label">Generated SQL ${copyBtn(d.sql, 'Copy')}</div><pre class="sql">${sqlHi(d.sql)}</pre>`;
-  }
-  if (d.route === 'MULTI_HOP' && d.steps && d.steps.length){
-    inner += `<div class="section-label">Reasoning · ${d.steps.length} ${d.steps.length === 1 ? 'hop' : 'hops'}</div><ol class="steps">`;
-    for (const s of d.steps)
-      inner += `<li class="${s.recovery ? 'recovery' : ''}"><span class="sq">${esc(s.q)}</span><span class="sc">${s.recovery ? 'recovery · ' : ''}+${s.n_sources} source${s.n_sources === 1 ? '' : 's'}</span></li>`;
-    inner += `</ol>`;
-  }
-  if (isCited && d.sources && d.sources.length){
-    const cited = d.sources.filter(s => s.cited).length;
-    inner += `<div class="section-label">Sources · ${cited} cited ${copyBtn(d.answer, 'Copy answer')}</div><div class="sources">`;
-    for (const s of d.sources)
-      inner += `<div class="src ${s.cited?'cited':''}"><span class="dot"></span><span class="tk">${esc(s.ticker)}</span><span class="sec">${esc(s.section)}</span><span class="id">${esc(s.chunk_id)}</span></div>`;
-    inner += `</div>`;
-  }
-  inner += `</div>`;
-  out.innerHTML = `<div class="card">${inner}</div>`;
-}
-
-/* ---------- query history (session) ---------- */
-const hbox = $('#history'), recentSec = $('#recent-sec');
-function pushHistory(question){
-  let h = [];
-  try { h = JSON.parse(sessionStorage.getItem('finsight-history') || '[]'); } catch {}
-  h = [question, ...h.filter(x => x !== question)].slice(0, 6);
-  sessionStorage.setItem('finsight-history', JSON.stringify(h));
-  renderHistory(h);
-}
-function renderHistory(h){
-  if (!h || !h.length){ recentSec.hidden = true; return; }
-  recentSec.hidden = false;
-  hbox.innerHTML = h.map(x => `<button class="hchip" title="${esc(x)}">${esc(x)}</button>`).join('');
-}
-hbox.addEventListener('click', e => { const c = e.target.closest('.hchip'); if (c) run(c.title); });
-(function initHistory(){ try { renderHistory(JSON.parse(sessionStorage.getItem('finsight-history')||'[]')); } catch {} })();
-
-/* ---------- ask flow ---------- */
-async function run(question, autoIngested){
-  q.value = question;
-  ask.disabled = true;
-  setExamples(false);   // fold the examples away the moment you ask
-  out.innerHTML = `<div class="status loading"><span class="spin"></span>Routing &amp; answering…</div>`;
-  try {
-    const r = await fetch('/query', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ question }) });
-    if (r.status === 429){ out.innerHTML = `<div class="status error">Rate limited by the LLM provider (free tier). Give it a moment and try again.</div>`; return; }
-    if (r.status === 503){ out.innerHTML = `<div class="status error">Service is still loading its models. Try again in a few seconds.</div>`; return; }
-    if (!r.ok){ const e = await r.json().catch(()=>({})); out.innerHTML = `<div class="status error">Error ${r.status}: ${esc(e.detail||'request failed')}</div>`; return; }
-    const d = await r.json();
-    if (d.route === 'INGESTING' && !autoIngested){ await autoIngestThenRetry(d, question); return; }
-    render(d);
-    if (!autoIngested) pushHistory(question);
-  } catch (e){
-    out.innerHTML = `<div class="status error">Network error: ${esc(String(e))}</div>`;
-  } finally { ask.disabled = false; }
-}
-
-async function autoIngestThenRetry(d, question){
-  const tk = d.pending_ticker, base = esc(d.answer), t0 = Date.now();
-  const tick = () => {
-    const s = Math.round((Date.now() - t0) / 1000);
-    out.innerHTML = `<div class="status loading"><span class="spin"></span><span>${base} <span style="opacity:.65">(${s}s — big filings can take a couple of minutes)</span></span></div>`;
-  };
-  tick();
-  while (Date.now() - t0 < 300000){
-    await new Promise(r => setTimeout(r, 2500));
-    let s;
-    try { s = await (await fetch('/ingest/' + tk)).json(); } catch { tick(); continue; }
-    if (s.status === 'ready'){ loadCompanies(); return run(question, true); }
-    if (String(s.status).startsWith('error')){
-      out.innerHTML = `<div class="status error">Couldn't fetch SEC filings for ${esc(tk)} — it may not file a standard 10-K. (${esc(s.status)})</div>`;
-      return;
-    }
-    tick();
-  }
-  out.innerHTML = `<div class="status error">${esc(tk)}'s filing is large and still processing in the background — ask again in a moment and it should be ready.</div>`;
-}
-
-form.addEventListener('submit', e => { e.preventDefault(); if (q.value.trim()) run(q.value.trim()); });
-$('#chips').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) run(c.dataset.q); });
-
-/* Examples are onboarding: collapsible, and they fold away once you've asked something —
-   which also keeps the question and its answer together in one screen. */
-const exToggle = $('#extoggle'), chipsBox = $('#chips');
-function setExamples(open){
-  chipsBox.hidden = !open;
-  exToggle.classList.toggle('collapsed', !open);
-  exToggle.setAttribute('aria-expanded', String(open));
-}
-exToggle.addEventListener('click', () => setExamples(chipsBox.hidden));
-document.addEventListener('keydown', e => {
-  if (e.key === '/' && document.activeElement !== q && !/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)){ e.preventDefault(); q.focus(); }
-});
-
-/* ---------- comparison builder ---------- */
-const METRICS = [
-  ['Revenue','total revenue'], ['Gross profit','gross profit'], ['Net income','net income'],
-  ['Operating income','operating income'], ['R&D','research and development expense'],
-  ['Diluted EPS','diluted earnings per share'],
-];
-const YEARS = [2023, 2024, 2025];
-const sel = { co: new Set(), met: new Set(['total revenue']), yr: new Set(['2023','2024']) };
-const joinAnd = a => a.length <= 1 ? (a[0] || '') : a.slice(0,-1).join(', ') + ' and ' + a[a.length-1];
-
-function renderCompanyOpts(list){
-  $('#bco').innerHTML = list.map(t => `<button type="button" class="tog${sel.co.has(t)?' on':''}" data-k="co" data-v="${esc(t)}">${esc(t)}</button>`).join('');
-}
-function renderBuilderStatic(){
-  $('#bmet').innerHTML = METRICS.map(([lab,ph]) => `<button type="button" class="tog${sel.met.has(ph)?' on':''}" data-k="met" data-v="${esc(ph)}">${esc(lab)}</button>`).join('');
-  $('#byr').innerHTML = YEARS.map(y => `<button type="button" class="tog${sel.yr.has(String(y))?' on':''}" data-k="yr" data-v="${y}">${y}</button>`).join('');
-  updateBgo();
-}
-function updateBgo(){
-  const nco = sel.co.size, nmet = sel.met.size, nyr = sel.yr.size;
-  const enough = nco >= 1 && nmet >= 1 && nyr >= 1 && (nco >= 2 || nmet >= 2 || nyr >= 2);
-  $('#bgo').disabled = !enough;
-  $('#bhint').textContent =
-    nco < 1 ? 'Pick at least one company' :
-    nmet < 1 ? 'Pick a metric' :
-    nyr < 1 ? 'Pick a fiscal year' :
-    !enough ? 'Pick 2+ across companies, metrics or years to compare' :
-    `${nco} ${nco>1?'companies':'company'} · ${nmet} metric${nmet>1?'s':''} · ${nyr} year${nyr>1?'s':''}`;
-}
-$('#builder').addEventListener('click', e => {
-  const b = e.target.closest('.tog'); if (!b) return;
-  const set = sel[b.dataset.k], v = b.dataset.v;
-  if (set.has(v)) set.delete(v); else set.add(v);
-  b.classList.toggle('on'); updateBgo();
-});
-$('#btoggle').addEventListener('click', () => {
-  const el = $('#builder'), open = el.hidden;
-  el.hidden = !open; $('#btoggle').classList.toggle('open', open); $('#btoggle').setAttribute('aria-expanded', String(open));
-});
-$('#bgo').addEventListener('click', () => {
-  const cos = [...sel.co];
-  const mets = METRICS.filter(([,ph]) => sel.met.has(ph)).map(([,ph]) => ph);  // preserve canonical order
-  const yrs = [...sel.yr].map(Number).sort((a,b) => a-b);
-  const yrStr = yrs.length === 1 ? `fiscal year ${yrs[0]}` : `fiscal years ${joinAnd(yrs.map(String))}`;
-  run(`Compare ${joinAnd(cos)} ${joinAnd(mets)} for ${yrStr}`);
-});
-renderBuilderStatic();
-
-/* ---------- corpus indicator + add company ---------- */
-async function loadCompanies(){
-  try {
-    const j = await (await fetch('/companies')).json();
-    const list = j.companies || [];
-    $('#cocount').textContent = list.length;
-    $('#corpustks').innerHTML = list.map(t => `<span class="tk-chip">${esc(t)}</span>`).join('');
-    renderCompanyOpts(list);
-  } catch {}
-}
-loadCompanies();
-
-const tk = $('#tk'), addbtn = $('#addbtn'), addstatus = $('#addstatus');
-async function addCompany(){
-  const ticker = tk.value.trim().toUpperCase();
-  if (!ticker) return;
-  addbtn.disabled = true;
-  addstatus.innerHTML = `<span class="spin" style="display:inline-block;vertical-align:-2px"></span> fetching &amp; embedding ${esc(ticker)}… (~30s)`;
-  try {
-    const r = await fetch('/ingest', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ ticker }) });
-    const j = await r.json();
-    if (r.status !== 202 && j.status !== 'ready'){ addstatus.textContent = 'could not start: ' + (j.detail||j.status||'error'); addbtn.disabled = false; return; }
-    const t0 = Date.now();
-    while (Date.now() - t0 < 120000){
-      const s = await (await fetch('/ingest/' + ticker)).json();
-      if (s.status === 'ready'){ addstatus.innerHTML = `<span class="rdy">✓ ${esc(ticker)} ready</span> — ask a question about it`; tk.value = ''; loadCompanies(); break; }
-      if (String(s.status).startsWith('error')){ addstatus.textContent = ticker + ': ' + s.status; break; }
-      await new Promise(r => setTimeout(r, 2500));
-    }
-  } catch (e){ addstatus.textContent = 'error: ' + e; }
-  finally { addbtn.disabled = false; }
-}
-addbtn.addEventListener('click', addCompany);
-tk.addEventListener('keydown', e => { if (e.key === 'Enter') addCompany(); });
-</script>
+  <dialog id="coverage-dialog" class="coverage-dialog" aria-labelledby="coverage-title">
+    <div class="dialog-head"><div><p class="eyebrow">CURRENT CORPUS</p><h2 id="coverage-title">Available companies</h2></div><button class="icon-button" id="coverage-close" type="button" aria-label="Close coverage">×</button></div>
+    <p class="dialog-copy">FinSight indexes each company's latest available 10-K. Financial figures may cover earlier years reported in that filing.</p>
+    <div class="coverage-list" id="coverage-list"></div>
+    <form id="add-company-form" class="add-company-form">
+      <label for="new-ticker" class="field-label">Add a public company by ticker</label>
+      <div class="add-company-row"><input id="new-ticker" name="ticker" type="text" maxlength="6" autocomplete="off" placeholder="e.g. ORCL" required><button class="secondary-button" id="add-company-button" type="submit">Add company</button></div>
+      <p class="field-help">Fetching and indexing a filing may take a few minutes.</p>
+      <p class="add-company-status" id="add-company-status" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
 </body>
 </html>

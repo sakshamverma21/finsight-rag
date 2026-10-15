@@ -24,7 +24,8 @@ _WS = re.compile(r"\s+")
 
 def _key(question: str) -> str:
     norm = _WS.sub(" ", question.strip().lower())
-    return "finsight:l1:" + hashlib.md5(norm.encode()).hexdigest()
+    # Response v2 includes filing excerpts. Old cached responses lack that evidence.
+    return "finsight:l1:v2:" + hashlib.md5(norm.encode()).hexdigest()
 
 
 class L1Cache:

@@ -33,6 +33,8 @@ class Source:
     ticker: str
     section: str
     text: str
+    fiscal_year: int | None = None
+    filing_date: str | None = None
 
 
 @dataclass
@@ -75,6 +77,8 @@ class Generator:
                 ticker=c["metadata"]["ticker"],
                 section=c["metadata"]["section"],
                 text=c["text"],
+                fiscal_year=c["metadata"].get("fiscal_year"),
+                filing_date=c["metadata"].get("filing_date"),
             )
             for i, c in enumerate(chunks)
         ]

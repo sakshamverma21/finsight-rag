@@ -78,6 +78,14 @@ uv run uvicorn finsight.api.main:app --port 8000     # → http://localhost:8000
 ```
 
 Or the whole stack (API + Redis) in one command: **`docker compose up --build`**.
+With the API running, `node scripts/verify_ui.mjs` checks the workspace in headless
+Chrome (set `CHROME_PATH` if Chrome is not in the default location).
+
+The browser workspace at `/` has separate **Ask** and **Compare** flows. Ask shows
+reported figures or a cited filing answer with expandable source excerpts; Compare
+offers the indexed companies, metrics, and fiscal years from `/coverage`. A missing
+comparison cell is marked **Not returned**—it does not assert that the filing lacks
+the figure. Recent questions are kept only for the current browser session.
 
 ## Repository map
 
@@ -89,8 +97,8 @@ finsight/
   ingestion/    SEC fetch, section extraction, chunking, on-demand ingest
   generation/   grounded generation + citation checking
   cache/        Redis L1 cache (graceful no-op without Redis)
-  api/          FastAPI service + single-file UI (charts, trends, comparison builder)
-scripts/        ingest, build-index, evals (retrieval, numeric, multi-hop)
+  api/          FastAPI service + static research workspace (HTML, CSS, JS)
+scripts/        ingest, build-index, evals, browser UI smoke check
 eval/           golden sets + eval harness
 ```
 

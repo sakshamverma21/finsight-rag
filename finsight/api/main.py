@@ -24,6 +24,7 @@ from pathlib import Path
 import duckdb
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 STATIC_DIR = Path(__file__).parent / "static"
@@ -62,6 +63,9 @@ class SourceOut(BaseModel):
     ticker: str
     section: str
     cited: bool
+    text: str = ""
+    fiscal_year: int | None = None
+    filing_date: str | None = None
 
 
 class QueryResponse(BaseModel):
@@ -132,11 +136,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="FinSight RAG", version="0.1.0", lifespan=lifespan)
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/", include_in_schema=False)
 def index() -> FileResponse:
-    """The demo UI — a single self-contained page served from the same origin as /query."""
+    """Serve the research UI from the same origin as the API."""
     return FileResponse(STATIC_DIR / "index.html")
 
 
@@ -240,7 +245,9 @@ def query(req: QueryRequest, background: BackgroundTasks) -> QueryResponse:
             citations_valid=bool(payload.citation_valid),
             sources=[
                 SourceOut(n=s.n, chunk_id=s.chunk_id, ticker=s.ticker,
-                          section=s.section, cited=s.n in payload.cited)
+                          section=s.section, cited=s.n in payload.cited,
+                          text=s.text, fiscal_year=s.fiscal_year,
+                          filing_date=s.filing_date)
                 for s in payload.sources
             ],
             subquestions=getattr(payload, "subquestions", []),
@@ -335,3 +342,35 @@ def ingest_status(ticker: str) -> dict:
 @app.get("/companies")
 def companies() -> dict:
     return {"companies": sorted(state["companies"])}
+
+
+@app.get("/coverage")
+def coverage() -> dict:
+    """Available fiscal periods for each indexed filer, for the comparison UI."""
+    if not state.get("ready"):
+        raise HTTPException(status_code=503, detail="models still loading")
+    with state["index_lock"]:
+        filing_years: dict[str, int] = {}
+        for chunk in state["index"].chunks:
+            meta = chunk["metadata"]
+            ticker, year = meta["ticker"], meta.get("fiscal_year")
+            if year is not None:
+                filing_years[ticker] = max(year, filing_years.get(ticker, year))
+
+        years: dict[str, list[int]] = {}
+        if DB_PATH.exists():
+            con = duckdb.connect(str(DB_PATH), read_only=True)
+            try:
+                for ticker, year in con.execute(
+                    "SELECT DISTINCT ticker, period_fy FROM facts "
+                    "WHERE period_fy IS NOT NULL ORDER BY ticker, period_fy DESC"
+                ).fetchall():
+                    years.setdefault(ticker, []).append(year)
+            finally:
+                con.close()
+
+        return {"companies": [
+            {"ticker": ticker, "filing_year": filing_years.get(ticker),
+             "years": years.get(ticker, [])}
+            for ticker in sorted(state["companies"])
+        ]}

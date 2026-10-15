@@ -127,7 +127,9 @@ def answer_multihop(query: str, retriever: Retriever, model: str = LLM_MODEL,
     chunks = chunks[:max_sources]
     sources = [
         Source(n=i + 1, chunk_id=c["chunk_id"], ticker=c["metadata"]["ticker"],
-               section=c["metadata"]["section"], text=c["text"])
+               section=c["metadata"]["section"], text=c["text"],
+               fiscal_year=c["metadata"].get("fiscal_year"),
+               filing_date=c["metadata"].get("filing_date"))
         for i, c in enumerate(chunks)
     ]
 
